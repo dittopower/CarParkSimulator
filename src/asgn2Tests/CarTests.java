@@ -16,17 +16,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import asgn2Vehicles.Car;
+
 /**
  * @author hogan
  *
  */
 public class CarTests {
 
+	Car testVehicle;
+	final int ArriveTime = 1;
+	final String ID = "Test00";
+	final boolean SmallCar = true;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		testVehicle = new Car(ID, ArriveTime, !SmallCar);
 	}
 
 	/**

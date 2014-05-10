@@ -33,6 +33,8 @@ public class Car extends Vehicle {
 	 * @throws VehicleException if arrivalTime is <= 0  
 	 */
 	public Car(String vehID, int arrivalTime, boolean small) throws VehicleException {
+		super (vehID, arrivalTime);
+		this.small = small;
 	}
 
 	/**
@@ -41,6 +43,7 @@ public class Car extends Vehicle {
 	 * @return true if small parking space, false otherwise
 	 */
 	public boolean isSmall() {
+		return small;
 	}
 
 	/* (non-Javadoc)
@@ -48,5 +51,10 @@ public class Car extends Vehicle {
 	 */
 	@Override
 	public String toString() {
+		if (isSmall()){
+			return "Small Car: " + getVehID();
+		}
+		
+		return "Car: " + getVehID();
 	}
 }
