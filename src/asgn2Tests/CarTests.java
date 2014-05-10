@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import asgn2Exceptions.VehicleException;
 import asgn2Vehicles.Car;
 
 /**
@@ -24,19 +25,23 @@ import asgn2Vehicles.Car;
  */
 public class CarTests {
 
-	Car testVehicle;
+	Car testCar;
 	final int ArriveTime = 1;
 	final String ID = "Test00";
 	final boolean SmallCar = true;
+	
+	
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		testVehicle = new Car(ID, ArriveTime, !SmallCar);
+		testCar = new Car(ID, ArriveTime, !SmallCar);
 	}
 
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -44,28 +49,43 @@ public class CarTests {
 	public void tearDown() throws Exception {
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Car#toString()}.
 	 */
 	@Test
 	public void testToString() {
-		fail("Not yet implemented"); // TODO
+		//Find out if there are requirement and what this test must do
+		System.out.print(testCar.toString());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Car#Car(java.lang.String, int, boolean)}.
+	 * @throws VehicleException 
 	 */
-	@Test
-	public void testCar() {
-		fail("Not yet implemented"); // TODO
+	@Test (expected = VehicleException.class)
+	public void testCar() throws VehicleException {
+		final int InvaildArrivalTime = 0;
+		new Car(ID,InvaildArrivalTime, !SmallCar);
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Car#isSmall()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testIsSmall() {
-		fail("Not yet implemented"); // TODO
+	public void testIsSmall() throws VehicleException {
+		//Check that the default TestCar is a normal Car.
+		assertFalse(testCar.isSmall());
+		
+		//Check that a Small car is a small car.
+		testCar = new Car(ID, ArriveTime, SmallCar);
+		assertTrue(testCar.isSmall());
 	}
 
 }

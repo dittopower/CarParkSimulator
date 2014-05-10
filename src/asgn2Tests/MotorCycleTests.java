@@ -16,19 +16,31 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import asgn2Exceptions.VehicleException;
+import asgn2Vehicles.MotorCycle;
+
 /**
  * @author hogan
  *
  */
 public class MotorCycleTests {
 
+	MotorCycle testCycle;
+	final int ArrivalTime = 1;
+	final String ID = "Test00";
+	
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		testCycle = new MotorCycle(ID, ArrivalTime);
 	}
 
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -36,14 +48,20 @@ public class MotorCycleTests {
 	public void tearDown() throws Exception {
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.MotorCycle#MotorCycle(java.lang.String, int)}.
+	 * @throws VehicleException 
 	 */
-	@Test
-	public void testMotorCycle() {
-		fail("Not yet implemented"); // TODO
+	@Test (expected = VehicleException.class)
+	public void testMotorCycle() throws VehicleException {
+		final int InvaildArrivalTime = 0;
+		new MotorCycle(ID, InvaildArrivalTime);
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#Vehicle(java.lang.String, int)}.
 	 */
@@ -52,22 +70,28 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#getVehID()}.
 	 */
 	@Test
 	public void testGetVehID() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(ID,testCycle.getVehID());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#getArrivalTime()}.
 	 */
 	@Test
 	public void testGetArrivalTime() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(ArrivalTime,testCycle.getArrivalTime());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#enterQueuedState()}.
 	 */
@@ -76,6 +100,8 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitQueuedState(int)}.
 	 */
@@ -84,6 +110,8 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#enterParkedState(int, int)}.
 	 */
@@ -92,6 +120,8 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitParkedState(int)}.
 	 */
@@ -100,6 +130,8 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitParkedState()}.
 	 */
@@ -108,53 +140,119 @@ public class MotorCycleTests {
 		fail("Not yet implemented"); // TODO
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#isParked()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testIsParked() {
-		fail("Not yet implemented"); // TODO
+	public void testIsParked() throws VehicleException {
+		assertFalse(testCycle.isParked());
+		
+		final int ParkTime = 2;
+		final int Duration = 30;
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		assertTrue(testCycle.isParked());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#isQueued()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testIsQueued() {
-		fail("Not yet implemented"); // TODO
+	public void testIsQueued() throws VehicleException {
+		assertFalse(testCycle.isQueued());
+		
+		testCycle.enterQueuedState();
+		
+		assertTrue(testCycle.isQueued());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#getParkingTime()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testGetParkingTime() {
-		fail("Not yet implemented"); // TODO
+	public void testGetParkingTime() throws VehicleException {
+
+		final int ParkTime = 2;
+		final int Duration = 30;
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		assertEquals(ParkTime, testCycle.getParkingTime());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#getDepartureTime()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testGetDepartureTime() {
-		fail("Not yet implemented"); // TODO
+	public void testGetDepartureTime() throws VehicleException {
+		
+		final int ParkTime = 2;
+		final int Duration = 30;
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		final int ExpectedDepartTime = ParkTime + Duration;
+		assertEquals(ExpectedDepartTime, testCycle.getDepartureTime());
+		
+		final int DepartTime = 40;
+		testCycle.exitParkedState(DepartTime);
+		
+		assertEquals(DepartTime, testCycle.getDepartureTime());
 	}
 
+	
+	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#wasQueued()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testWasQueued() {
-		fail("Not yet implemented"); // TODO
+	public void testWasQueued() throws VehicleException {
+		assertFalse(testCycle.wasQueued());
+		
+		testCycle.enterQueuedState();
+		
+		assertTrue(testCycle.wasQueued());
+		
+		final int ExitTime = 10;
+		testCycle.exitQueuedState(ExitTime);
+		
+		assertTrue(testCycle.wasQueued());
 	}
+	
+	
 
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#wasParked()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testWasParked() {
-		fail("Not yet implemented"); // TODO
+	public void testWasParked() throws VehicleException {
+		assertFalse(testCycle.wasParked());
+		
+		final int ParkTime = 2;
+		final int Duration = 30;
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		assertTrue(testCycle.wasParked());
+		
+		final int ExitTime = 10;
+		testCycle.exitParkedState(ExitTime);
+		
+		assertTrue(testCycle.wasParked());
 	}
+	
+	
 
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#isSatisfied()}.
@@ -163,13 +261,15 @@ public class MotorCycleTests {
 	public void testIsSatisfied() {
 		fail("Not yet implemented"); // TODO
 	}
+	
+	
 
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#toString()}.
 	 */
 	@Test
 	public void testToString() {
-		fail("Not yet implemented"); // TODO
+		testCycle.toString();
 	}
 
 }

@@ -54,8 +54,11 @@ public abstract class Vehicle {
 	private int departTime;
 	private int queTime;
 	private int queExitTime;
-	//State
+
+	//States
 	private State state;
+	private boolean hasParked;
+	private boolean hasQueued;
 	
 	
 	
@@ -78,6 +81,8 @@ public abstract class Vehicle {
 		
 		//Set Initial State.
 		state = State.Default;
+		hasParked = false;
+		hasQueued = false;
 	}
 
 	
@@ -118,6 +123,7 @@ public abstract class Vehicle {
 		
 		//Set Parked State.
 		state = State.Parked;
+		hasParked = true;
 	}
 	
 	
@@ -140,6 +146,7 @@ public abstract class Vehicle {
 		
 		//Set Queued State.
 		state = State.Queued;
+		hasQueued = true;
 	}
 	
 	
@@ -293,7 +300,48 @@ public abstract class Vehicle {
 	 */
 	@Override
 	public String toString() {
-		return null;
+		return coreString(); 
+	}
+
+
+
+	/**
+	 * Creates the core string of the to string method.
+	 * Is separate to allow easy adjustment in subclasses
+	 * @return The core string for the toString Method.
+	 */
+	protected String coreString() {
+		//Get the ID and initial Time strings
+		String result = "Vehicle vehID: " + getVehID() +
+				"\nArrival Time: " + getArrivalTime();
+		
+		//Get the string of the objects Queue information
+		if (wasQueued()){
+			result += "\nEntry to Queue: " + queTime +
+					"\nExit from Queue: " + queExitTime +
+					"\nQueuing Time: " + (queExitTime - queTime);
+		}else{
+			result += "\nVehicle was not quequed";
+		}
+		
+		//Get the string of the objects Carpark information
+		if (wasParked()){
+			result += "\nEntry to Car Park: " + parkTime +
+					"\nExit from Car Park: " + departTime +
+					"\nParking Time: " + (departTime - parkTime);
+		}else{
+			result += "\nVehicle was not parked";
+		}
+		
+		//Get the string of the customers satisfaction
+		if (isSatisfied()){
+			result += "\nCustomer was satisfied";
+		}else{
+			result += "\nCustomer was unsatisfied";
+		}
+		
+		//Return Strings
+		return result;
 	}
 
 	
@@ -304,11 +352,7 @@ public abstract class Vehicle {
 	 * @return true if vehicle was or is in a parked state, false otherwise 
 	 */
 	public boolean wasParked() {
-		//If the Park Time variable is set then the vehicle has been parked.
-		if (parkTime >= 0){
-			return true;
-		}
-		return false;
+		return hasParked;
 	}
 
 	
@@ -318,10 +362,6 @@ public abstract class Vehicle {
 	 * @return true if vehicle was or is in a queued state, false otherwise 
 	 */
 	public boolean wasQueued() {
-		//If the Queue Time variable is set then the vehicle has been in the Queue.
-		if (queTime >= 0){
-			return true;
-		}
-		return false;
+		return hasQueued;
 	}
 }

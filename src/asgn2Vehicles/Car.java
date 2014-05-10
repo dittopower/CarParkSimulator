@@ -51,10 +51,15 @@ public class Car extends Vehicle {
 	 */
 	@Override
 	public String toString() {
+
+		//Get core string
+		String result = coreString();
+		
+		//Add car string
 		if (isSmall()){
-			return "Small Car: " + getVehID();
+			return result + "\nCar can use small car parking space";
 		}
 		
-		return "Car: " + getVehID();
+		return result + "\nCar cannot use small car parking space";
 	}
 }
