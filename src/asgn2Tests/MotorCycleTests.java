@@ -16,8 +16,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+
 import asgn2Exceptions.VehicleException;
 import asgn2Vehicles.MotorCycle;
+import asgn2Vehicles.Vehicle;
 
 /**
  * @author hogan
@@ -25,10 +28,13 @@ import asgn2Vehicles.MotorCycle;
  */
 public class MotorCycleTests {
 
-	MotorCycle testCycle;
+	Vehicle testCycle;
 	final int ArrivalTime = 1;
 	final String ID = "Test00";
-	
+	final int exit_Time = 40;
+	final int ParkTime = 2;
+	final int Duration = 30;
+	final int DepartTime = 40;
 	
 	
 	/**
@@ -94,50 +100,112 @@ public class MotorCycleTests {
 	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#enterQueuedState()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testEnterQueuedState() {
-		fail("Not yet implemented"); // TODO
+	public void testEnterQueuedState() throws VehicleException {
+		
+		testCycle.enterQueuedState();
+		
+		assertTrue(testCycle.isQueued());
+	}
+	
+	/**
+	 * Test method for {@link asgn2Vehicles.Vehicle#enterQueuedState()}.
+	 * @throws VehicleException 
+	 */
+	@Test (expected = VehicleException.class)
+	public void testEnterQueuedStateException() throws VehicleException {
+		
+		testCycle.enterQueuedState();
+		
+		testCycle.enterQueuedState();
 	}
 
 	
 	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitQueuedState(int)}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testExitQueuedState() {
-		fail("Not yet implemented"); // TODO
+	public void testExitQueuedState() throws VehicleException {
+		
+		testCycle.enterQueuedState();
+		
+		testCycle.exitQueuedState(exit_Time);
+		
+		assertFalse(testCycle.isQueued());
 	}
 
 	
 	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#enterParkedState(int, int)}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testEnterParkedState() {
-		fail("Not yet implemented"); // TODO
+	public void testEnterParkedState() throws VehicleException {
+		
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		assertTrue(testCycle.isParked());
+	}
+	
+	
+	
+	/**
+	 * Test method for {@link asgn2Vehicles.Vehicle#enterParkedState(int, int)}.
+	 * @throws VehicleException 
+	 */
+	@Test (expected = VehicleException.class)
+	public void testEnterParkedStateException() throws VehicleException {
+		
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		testCycle.enterParkedState(ParkTime, Duration);
 	}
 
 	
 	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitParkedState(int)}.
+	 * @throws VehicleException 
 	 */
-	@Test
-	public void testExitParkedStateInt() {
-		fail("Not yet implemented"); // TODO
+	@Test (expected = VehicleException.class)
+	public void testExitParkedStateInt() throws VehicleException {
+		
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		final int DepartBeforeArrival = -1;
+		
+		testCycle.exitParkedState(DepartBeforeArrival);
 	}
 
 	
 	
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#exitParkedState()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testExitParkedState() {
-		fail("Not yet implemented"); // TODO
+	public void testExitParkedState() throws VehicleException {
+		
+		testCycle.enterParkedState(ParkTime, Duration);
+		
+		testCycle.exitParkedState(DepartTime);
+		
+		assertFalse(testCycle.isParked());
+	}
+	
+	/**
+	 * Test method for {@link asgn2Vehicles.Vehicle#exitParkedState()}.
+	 * @throws VehicleException 
+	 */
+	@Test (expected = VehicleException.class)
+	public void testExitParkedStateException() throws VehicleException {
+		
+		testCycle.exitParkedState(DepartTime);
 	}
 
 	
@@ -150,8 +218,6 @@ public class MotorCycleTests {
 	public void testIsParked() throws VehicleException {
 		assertFalse(testCycle.isParked());
 		
-		final int ParkTime = 2;
-		final int Duration = 30;
 		testCycle.enterParkedState(ParkTime, Duration);
 		
 		assertTrue(testCycle.isParked());
@@ -181,8 +247,6 @@ public class MotorCycleTests {
 	@Test
 	public void testGetParkingTime() throws VehicleException {
 
-		final int ParkTime = 2;
-		final int Duration = 30;
 		testCycle.enterParkedState(ParkTime, Duration);
 		
 		assertEquals(ParkTime, testCycle.getParkingTime());
@@ -197,14 +261,11 @@ public class MotorCycleTests {
 	@Test
 	public void testGetDepartureTime() throws VehicleException {
 		
-		final int ParkTime = 2;
-		final int Duration = 30;
 		testCycle.enterParkedState(ParkTime, Duration);
 		
 		final int ExpectedDepartTime = ParkTime + Duration;
 		assertEquals(ExpectedDepartTime, testCycle.getDepartureTime());
 		
-		final int DepartTime = 40;
 		testCycle.exitParkedState(DepartTime);
 		
 		assertEquals(DepartTime, testCycle.getDepartureTime());
@@ -256,10 +317,25 @@ public class MotorCycleTests {
 
 	/**
 	 * Test method for {@link asgn2Vehicles.Vehicle#isSatisfied()}.
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testIsSatisfied() {
-		fail("Not yet implemented"); // TODO
+	public void testIsSatisfied() throws VehicleException {
+		
+		assertFalse(testCycle.isSatisfied());
+		
+		testCycle.enterParkedState(ParkTime, Duration);
+		assertTrue(testCycle.isSatisfied());
+		
+		testCycle.exitParkedState(DepartTime);
+		assertTrue(testCycle.isSatisfied());
+		
+		testCycle.enterQueuedState();
+		assertTrue(testCycle.isSatisfied());
+		
+		final int OverMaxQueueTime = 30;
+		testCycle.exitQueuedState(OverMaxQueueTime);
+		assertFalse(testCycle.isSatisfied());
 	}
 	
 	
