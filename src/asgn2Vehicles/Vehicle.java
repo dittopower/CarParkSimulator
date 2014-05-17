@@ -14,7 +14,7 @@ import asgn2Exceptions.VehicleException;
 import asgn2Simulators.Constants;
 
 //Create a State data type
-enum State { Default, Queued, Parked};
+enum State { Default, Queued, Parked, Archived};
 
 /**
  * Vehicle is an abstract class specifying the basic state of a vehicle and the methods used to 
