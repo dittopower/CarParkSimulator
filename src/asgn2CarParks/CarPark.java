@@ -95,6 +95,7 @@ public class CarPark {
 		
 		spaces = new ArrayList <Vehicle> ();
 		queue = new LinkedBlockingQueue <Vehicle> (maxQueueSize);
+		past = new ArrayList <Vehicle> ();
 	}
 	
 	
@@ -109,7 +110,8 @@ public class CarPark {
 	 */
 	public void archiveDepartingVehicles(int time,boolean force) throws VehicleException, SimulationException {
 		//Check each vehicle
-		for (Vehicle v : this.spaces){
+		for (int i = 0; i < spaces.size(); i++){
+			Vehicle v = spaces.get(i);
 			
 			if (!v.isParked()){
 				throw new VehicleException("Vehicle not in the correct state. ");
@@ -235,7 +237,7 @@ public class CarPark {
 	 * constraints are violated
 	 */
 	public void exitQueue(Vehicle v,int exitTime) throws SimulationException, VehicleException {
-		if (queue.contains(v)){
+		if (!queue.contains(v)){
 			throw new SimulationException ("Vehicle is not in the queue.");
 		}
 		
@@ -401,6 +403,8 @@ public class CarPark {
 		}else{
 			numMotorCycles++;
 		}
+		
+		
 	}
 
 	
@@ -409,12 +413,28 @@ public class CarPark {
 	 * Silently process elements in the queue, whether empty or not. If possible, add them to the car park. 
 	 * Includes transition via exitQueuedState where appropriate
 	 * Block when we reach the first element that can't be parked. 
+	 * @param sim Simulation object controlling vehicle creation
 	 * @param time int holding current simulation time 
 	 * @throws SimulationException if no suitable spaces available when parking attempted
 	 * @throws VehicleException if state is incorrect, or timing constraints are violated
 	 */
 	public void processQueue(int time, Simulator sim) throws VehicleException, SimulationException {
-		//TODO
+
+		if (!queueEmpty()){
+			for (Vehicle v : this.queue){ 
+				if (!v.isQueued()){
+					throw new VehicleException("Vehicle is not in the correct state.");
+				}
+				if (spacesAvailable(v)){
+					exitQueue(v,time);
+					parkVehicle(v,time,sim.setDuration());
+
+					status += setVehicleMsg(v,"Q","P");
+				}else{
+					break;
+				}
+			}
+		}
 	}
 
 	
@@ -494,11 +514,49 @@ public class CarPark {
 	 * Method to try to create new vehicles (one trial per vehicle type per time point) 
 	 * and to then try to park or queue (or archive) any vehicles that are created 
 	 * @param sim Simulation object controlling vehicle creation 
+	 * @param time int holding current simulation time 
 	 * @throws SimulationException if no suitable spaces available when operation attempted 
 	 * @throws VehicleException if vehicle creation violates constraints 
 	 */
 	public void tryProcessNewVehicles(int time,Simulator sim) throws VehicleException, SimulationException {
-		//TODO
+		
+		if (sim.newCarTrial()){
+			String id = "car" + count;
+			Vehicle v = new Car(id,time,sim.smallCarTrial());
+			processNewVehicle(v,time, sim);
+		}
+		if (sim.motorCycleTrial()){
+			String id = "MC" + count;
+			Vehicle v = new MotorCycle(id,time);
+			processNewVehicle(v,time, sim);
+		}
+	}
+
+
+
+	/**
+	 * 
+	 * @param time int holding current simulation time.
+	 * @param sim Simulation object controlling vehicle creation.
+	 * @throws VehicleException
+	 * @throws SimulationException
+	 */
+	private void processNewVehicle(Vehicle v, int time, Simulator sim) throws VehicleException, SimulationException {
+		
+		String finalState = "";
+		
+		if (spacesAvailable(v)){
+			parkVehicle(v,time,sim.setDuration());
+			finalState = "P";
+		}else if (!queueFull()){
+			enterQueue(v);
+			finalState = "Q";
+		}else{
+			archiveNewVehicle(v);
+			finalState = "A";
+		}
+		count++;
+		status += setVehicleMsg(v,"N", finalState);
 	}
 
 	
