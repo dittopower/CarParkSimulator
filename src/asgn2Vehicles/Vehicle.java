@@ -147,6 +147,7 @@ public abstract class Vehicle {
 		//Set Queued State.
 		state = State.Queued;
 		hasQueued = true;
+		queTime = arriveTime;
 	}
 	
 	
