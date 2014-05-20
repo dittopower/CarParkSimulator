@@ -119,7 +119,7 @@ public class SimulationRunner {
 					
 					//Try to parse the double's from the command line.
 					try {
-						doubleArgs[i] = Double.parseDouble(args[i]);
+						doubleArgs[i-mustBeDoubles] = Double.parseDouble(args[i]);
 						
 					} catch (NumberFormatException e){
 						System.err.println("Argument" + args[i] + " must be a double.");
@@ -132,7 +132,7 @@ public class SimulationRunner {
 			
 			//Create the new Simulator from the command line.
 			try {
-				s = new Simulator(intArgs[4], doubleArgs[0], doubleArgs[1], doubleArgs[2], doubleArgs[3], doubleArgs[4]);
+				s = new Simulator(intArgs[4], doubleArgs[3], doubleArgs[4], doubleArgs[0], doubleArgs[1], doubleArgs[2]);
 				
 			} catch (SimulationException e1) {
 					e1.printStackTrace();
