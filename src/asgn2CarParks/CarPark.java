@@ -109,24 +109,33 @@ public class CarPark {
 	 * @throws SimulationException if one or more departing vehicles are not in the car park when operation applied
 	 */
 	public void archiveDepartingVehicles(int time,boolean force) throws VehicleException, SimulationException {
-		//Check each vehicle
-		for (int i = 0; i < spaces.size(); i++){
-			Vehicle v = spaces.get(i);
+		//Set the number of vehicle to be check to all.
+		int remaining = spaces.size()-1;//As elements start from 0 and counting from 1, take 1 from the size.
+		
+		//While vehicles are unchecked
+		while (remaining >= 0){
 			
+			//Get the next remaining vehicle 
+			Vehicle v = spaces.get(remaining);
+			
+			//Check its state
 			if (!v.isParked()){
 				throw new VehicleException("Vehicle not in the correct state. ");
 			}
 			
-			//If there time has elapsed or are being forced out
+			//If their time has elapsed or vehicles are being forced out
 			if (force || (time >= v.getDepartureTime())){
 				
 				//Archive and add event to status;
 				past.add(v);
 				status += setVehicleMsg(v,"P","A");
 				
-				//unpark the Vehicle and exit the car park. Contains Vehicle.exitParkedState() transition and Simulation Exception.
+				//Unpark the Vehicle and exit the car park. Contains Vehicle.exitParkedState() transition and Simulation Exception.
 				unparkVehicle(v,time);
+				
 			}
+			//Increment vehicles remaining to be checked
+			remaining--;	
 		}
 		
 	}
@@ -168,7 +177,7 @@ public class CarPark {
 				throw new VehicleException("Vehicle is not in the correct state.");
 			}
 			
-			if ((time - v.getArrivalTime()) > Constants.MAXIMUM_QUEUE_TIME){
+			if (((time - v.getArrivalTime()) > Constants.MAXIMUM_QUEUE_TIME)){
 				
 				exitQueue(v,time);
 				
