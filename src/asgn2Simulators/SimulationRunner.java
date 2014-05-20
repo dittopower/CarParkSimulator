@@ -91,7 +91,55 @@ public class SimulationRunner {
 			System.exit(-1);
 		}
 		
-		//TODO: Implement Argument Processing 
+		/* Implement Argument Processing */
+		//Non-magic numbers
+		final int minimumArgs = 10;
+		final int mustBeInts = 5;
+		final int mustBeDoubles = 5;
+		
+		if (args.length == minimumArgs){
+			
+			//Arrays to store the parsed arguments.
+			int intArgs [] = new int [mustBeInts];
+			double doubleArgs [] = new double [mustBeDoubles];
+			
+			for (int i = 0; i < minimumArgs; i++){
+				if (i < mustBeInts){
+					
+					//Try to parse the Int's from the command line.
+					try {
+						intArgs[i] = Integer.parseInt(args[i]);
+						
+					} catch (NumberFormatException e){
+						System.err.println("Argument" + args[i] + " must be an integer.");
+						System.exit(1);
+					}
+					
+				}else{
+					
+					//Try to parse the double's from the command line.
+					try {
+						doubleArgs[i] = Double.parseDouble(args[i]);
+						
+					} catch (NumberFormatException e){
+						System.err.println("Argument" + args[i] + " must be a double.");
+						System.exit(1);
+					}
+				}
+			}
+			//Create the new Car Park from the command line.
+			cp = new CarPark (intArgs[0], intArgs[1], intArgs[2], intArgs[3]);
+			
+			//Create the new Simulator from the command line.
+			try {
+				s = new Simulator(intArgs[4], doubleArgs[0], doubleArgs[1], doubleArgs[2], doubleArgs[3], doubleArgs[4]);
+				
+			} catch (SimulationException e1) {
+					e1.printStackTrace();
+					System.exit(-1);
+				}
+		}
+		/* End Argument Processing */
 		
 		//Run the simulation 
 		SimulationRunner sr = new SimulationRunner(cp,s,l);
