@@ -346,6 +346,7 @@ public class MotorCycleTests {
 	@Test
 	public void testToString() {
 		testCycle.toString();
+		assertTrue(true);
 	}
 
 }

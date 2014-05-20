@@ -57,7 +57,8 @@ public class CarTests {
 	@Test
 	public void testToString() {
 		//Find out if there are requirement and what this test must do
-		System.out.print(testCar.toString());
+		testCar.toString();
+		assertTrue(true);
 	}
 
 	
