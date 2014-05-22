@@ -60,7 +60,7 @@ public class CarPark {
 	private LinkedBlockingQueue <Vehicle> queue; //http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/LinkedBlockingQueue.html
 	private ArrayList<Vehicle> past;
 	
-	String status;
+	private String status;
 	
 	
 	/**
