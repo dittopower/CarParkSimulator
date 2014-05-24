@@ -77,6 +77,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private JPanel pnlRight;
 	private JPanel pnlLeft;
 	private JPanel pnlParms;
+	
 
 	/**
 	 * @param arg0
