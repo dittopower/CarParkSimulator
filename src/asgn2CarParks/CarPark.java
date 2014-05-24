@@ -56,11 +56,15 @@ public class CarPark {
 	private int numDissatisfied;
 	
 	//The actual car park
-	private ArrayList<Vehicle> spaces;
-	private LinkedBlockingQueue <Vehicle> queue; //http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/LinkedBlockingQueue.html
-	private ArrayList<Vehicle> past;
+	protected ArrayList<Vehicle> spaces;
+	protected LinkedBlockingQueue <Vehicle> queue; //http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/LinkedBlockingQueue.html
+	protected ArrayList<Vehicle> past;
 	
-	String status;
+	private String status;
+	//Variables to allow repeats for gui status
+	private String currentStatus;
+	private int currentStatusTime;
+
 	
 	
 	/**
@@ -96,6 +100,8 @@ public class CarPark {
 		spaces = new ArrayList <Vehicle> ();
 		queue = new LinkedBlockingQueue <Vehicle> (maxQueueSize);
 		past = new ArrayList <Vehicle> ();
+		status = "";
+		currentStatusTime = -9999;//Initialize to a value that should never be used.
 	}
 	
 	
@@ -322,10 +328,27 @@ public class CarPark {
 	 * @return String containing current state 
 	 */
 	public String getStatus(int time) {
+		if (currentStatusTime == time){
+			return currentStatus;
+		}
+		currentStatusTime = time;
+		String str = stringStatus(time);
+		this.status="";
+		currentStatus = str;
+		return str;
+	}
+
+
+
+	/**
+	 * @param time
+	 * @return
+	 */
+	protected String stringStatus(int time) {
 		String str = time +"::"
 		+ this.count + "::" 
 		+ "P:" + this.spaces.size() + "::"
-		+ "C:" + this.numCars + "::S:" + this.numSmallCars 
+		+ "C:" + this.getNumCars() + "::S:" + this.numSmallCars 
 		+ "::M:" + this.numMotorCycles 
 		+ "::D:" + this.numDissatisfied 
 		+ "::A:" + this.past.size()  
@@ -342,7 +365,6 @@ public class CarPark {
 			}
 		}
 		str += this.status;
-		this.status="";
 		return str+"\n";
 	}
 	
@@ -530,7 +552,7 @@ public class CarPark {
 	public void tryProcessNewVehicles(int time,Simulator sim) throws VehicleException, SimulationException {
 		
 		if (sim.newCarTrial()){
-			String id = "car" + count;
+			String id = "C" + count;
 			Vehicle v = new Car(id,time,sim.smallCarTrial());
 			processNewVehicle(v,time, sim);
 		}

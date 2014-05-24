@@ -11,8 +11,6 @@
 package asgn2Simulators;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -40,104 +38,110 @@ import asgn2Exceptions.VehicleException;
  */
 @SuppressWarnings("serial")
 public class GUISimulator extends JFrame implements Runnable, ActionListener {
-	private SimulationRunner simRunner;
+	
 	private Simulator sim;
 	private CarPark carPark;
 	private Log log;
 	
-	private final int WIDTH = 300;
-	private final int HEIGHT = 500;
+	private final String StartText = "Set the initial simulation parameters and press 'Start'\n\n";
+	private final int ErrorValue = -1114;
+	
 	// Places where we'll add components to a frame
-	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE};
+	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE, MIDDLERIGHT};
 	// How big a margin to allow for the main frame
 	final Integer mainMargin = 20; // pixels
 	
 	private JButton startButton;
+	private JButton resetButton;
 	
 	//Group 2 fields
 	private JTextField maxCarSpaces;
+	private int carSpaces;
 	private JTextField maxSmallCarSpaces;
+	private int smallCarSpaces;
 	private JTextField maxMotorCycleSpaces;
+	private int motorCycleSpaces;
 	private JTextField maxQueueSpaces;
+	private int queueSpaces;
 	//Group 3 fields
 	private JTextField seed;
+	private int mySeed;
 	private JTextField probCar;
+	private double carProb;
 	private JTextField probSmallCar;
+	private double smallCarProb;
 	private JTextField probMotorCycle;
+	private double motorCycleProb;
 	private JTextField duration;
+	private double meanDuration;
 	private JTextField durationSD;
+	private double meanDurationSD;
 
 	// Display for simulation messages
 	private JTextArea display;           
 	private JScrollPane textScrollPane; 
 	
-	private JPanel pnlCentre;
-	private JPanel pnlTop;
-	private JPanel pnlBot;
-	private JPanel pnlRight;
-	private JPanel pnlLeft;
-	private JPanel pnlParms;
+	private JPanel pnlLHS;
+	private JPanel pnlData;
+	private JPanel pnlParm;
+	private JPanel pnlButtons;
 	
 
+	
 	/**
 	 * @param arg0
 	 * @throws HeadlessException
 	 */
 	public GUISimulator(String arg0) throws HeadlessException {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	
+	
 	private void createGUI() {
-		//setSize(WIDTH, HEIGHT);//Manually setup the window
+//		setSize(WIDTH, HEIGHT);//Manually setup the window
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setLayout(new BorderLayout());
+//	    this.setBackground(Color.GRAY);
 	    
-	    //
 		GridBagLayout layout = new GridBagLayout();
-
-	    
+	   
 	    //Solution code uses different colours to highlight different panels 
-	    pnlCentre = createPanel(Color.BLUE);
-	    pnlTop = createPanel(Color.CYAN);
-	    pnlBot = createPanel(Color.DARK_GRAY);
-	    pnlRight = createPanel(Color.RED);
-	    pnlLeft = createPanel(Color.GREEN);
-	    pnlParms = createPanel(Color.PINK);
+	    pnlData = createPanel();
+	    pnlParm = createPanel();
+	    pnlButtons = createPanel();
+	    pnlLHS = createPanel();
 	    
-	    this.getContentPane().add(pnlCentre,BorderLayout.CENTER);
-	    this.getContentPane().add(pnlTop,BorderLayout.NORTH);
-	    this.getContentPane().add(pnlBot,BorderLayout.SOUTH);
-	    this.getContentPane().add(pnlRight,BorderLayout.EAST);
-	    this.getContentPane().add(pnlLeft,BorderLayout.WEST);
+	    pnlLHS.setLayout(layout);
+		pnlData.setLayout(layout);
+		pnlParm.setLayout(layout);
+		
+	    add(pnlLHS,BorderLayout.WEST);
+	    add(pnlData,BorderLayout.EAST);
+		
+	    pnlLHS.add(pnlParm, positionConstraints(Position.MIDDLECENTRE, mainMargin));
+	    pnlLHS.add(pnlButtons, positionConstraints(Position.BOTTOMCENTRE, mainMargin));
 	    
-		setLayout(layout);
-		pnlBot.setLayout(layout);
-		pnlCentre.setLayout(layout);
-		pnlTop.setLayout(layout);
-		pnlRight.setLayout(layout);
-		pnlLeft.setLayout(layout);
-		pnlParms.setLayout(layout);
-
-	    repaint();
-	    
-	 // Create a scrollable text area for displaying instructions and messages
- 		display = new JTextArea(5, 40); // lines by columns
+	    // Create a scrollable text area for displaying instructions and messages
+ 		display = new JTextArea(20, 40); // lines by columns
  		display.setEditable(false);
  		display.setLineWrap(true);
  		textScrollPane = new JScrollPane(display);
- 		this.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
- 		display.setText("Set the initial simulation parameters and press 'Start'\n\n");
-	    
+ 		pnlData.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
+ 		setText(StartText);
+
+ 		// Create Buttons   
 	    startButton = createButton("Start");
-	    pnlBot.add(startButton);
+	    pnlButtons.add(startButton);
+	    resetButton = createButton("Reset");
+	    resetButton.setEnabled(false);
+	    pnlButtons.add(resetButton);
 	    
-	    //Group 2 args
+	    //Group 2 parameters
 	    maxCarSpaces = addParameterPanel("Max Car Spaces:", Constants.DEFAULT_MAX_CAR_SPACES);
 	    maxSmallCarSpaces = addParameterPanel("Max Small Car Spaces:", Constants.DEFAULT_MAX_SMALL_CAR_SPACES);
 	    maxMotorCycleSpaces = addParameterPanel("Max MotorCycle Spaces:", Constants.DEFAULT_MAX_MOTORCYCLE_SPACES);
 	    maxQueueSpaces = addParameterPanel("Max Queue Size:", Constants.DEFAULT_MAX_QUEUE_SIZE);
-	    //group 3 args
+	    //group 3 parameters
 	    seed = addParameterPanel("Random Number Seed:", Constants.DEFAULT_SEED);
 	    probCar = addParameterPanel("Car Probability:", Constants.DEFAULT_CAR_PROB);
 	    probSmallCar = addParameterPanel("Small Car Probability:", Constants.DEFAULT_SMALL_CAR_PROB);
@@ -145,40 +149,37 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    duration = addParameterPanel("Average Stay Duration:", Constants.DEFAULT_INTENDED_STAY_MEAN);
 	    durationSD = addParameterPanel("Stay Standard Deviation:", Constants.DEFAULT_INTENDED_STAY_SD);
 	    
-	    layoutButtonPanel(); 
-	    
 	    this.setVisible(true);
 	    this.pack();//this uses the automated pack to setup the window.
 	}
 	
-
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		createGUI();
-
 	}
 
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-        SwingUtilities.invokeLater(new GUISimulator("BorderLayout"));
-
+		//Potentially should take the same arguments as SimmulationRunner.java
+        SwingUtilities.invokeLater(new GUISimulator("CarPark Simulator"));
 	}
 
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Get event's source 
 		Object source = e.getSource(); 
 
 		//Consider the alternatives (not all are available at once) 
-		if (source == startButton)
+		if (source == startButton && checkValues())
 		{
 			maxCarSpaces.setEditable(false);
 		    maxSmallCarSpaces.setEditable(false);
@@ -192,34 +193,121 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		    duration.setEditable(false);
 		    durationSD.setEditable(false);
 		    
-			//startSimulation
+			//Setup Variables
 		    try {
-				sim = new Simulator(str_Int(seed.getText()), str_Double(duration.getText()), str_Double(durationSD.getText()),
-						str_Double(probCar.getText()), str_Double(probSmallCar.getText()), str_Double(probMotorCycle.getText()));
+				sim = new Simulator(mySeed, meanDuration, meanDurationSD, carProb, smallCarProb, motorCycleProb);
 			} catch (SimulationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				reset(e1.toString());
 			}
-		    carPark = new CarPark(str_Int(maxCarSpaces.getText()), str_Int(maxSmallCarSpaces.getText()),
-		    		str_Int(maxMotorCycleSpaces.getText()), str_Int(maxQueueSpaces.getText()));
+		    
+		    carPark = new CarPark(carSpaces, smallCarSpaces, motorCycleSpaces, queueSpaces);
+		    
 		    try {
 				log = new Log();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				reset(e1.toString());
 			}
-		    simRunner = new SimulationRunner (carPark, sim, log);
+		    
 		    try {
-				simRunner.runSimulation();
+				runSimulation();
 			} catch (VehicleException | SimulationException | IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				reset(e1.toString());
 			}
-		    display.setText(carPark.toString());
+		    startButton.setText("Again");
+		    resetButton.setEnabled(true);
+		}
+		if (source == resetButton){
+			startButton.setText("Start");
+		    resetButton.setEnabled(false);
+		    clearText();
+		    reset(StartText);
 		}
 		
 	}
 	
+	
+	private boolean checkValues(){
+		boolean bool = true;
+		carSpaces = str_Int(maxCarSpaces.getText());
+		smallCarSpaces = str_Int(maxSmallCarSpaces.getText());
+		motorCycleSpaces =  str_Int(maxMotorCycleSpaces.getText());
+		queueSpaces = str_Int(maxQueueSpaces.getText());
+		mySeed = str_Int(seed.getText());
+		meanDuration = str_Double(duration.getText());
+		meanDurationSD = str_Double(durationSD.getText());
+		carProb = str_Double(probCar.getText());
+		smallCarProb =str_Double(probSmallCar.getText());
+		motorCycleProb = str_Double(probMotorCycle.getText());
+		
+		if (carSpaces == ErrorValue){
+			addText("Cars Spaces must be an Integer.\n");
+			bool = false;
+		}
+		if (smallCarSpaces == ErrorValue){
+			addText("Small Cars Spaces must be an Integer.\n");
+			bool = false;
+		}
+		if (motorCycleSpaces == ErrorValue){
+			addText("MotorCycle Spaces must be an Integer.\n");
+			bool = false;
+		}
+		if (queueSpaces == ErrorValue){
+			addText("Queue Spaces must be an Integer.\n");
+			bool = false;
+		}
+		if (mySeed == ErrorValue){
+			addText("Seed must be an Integer.\n");
+			bool = false;
+		}
+		if (meanDuration < 0 || meanDuration == ErrorValue){
+			addText("Intended Duration must be a number larger than 0.\n");
+			bool = false;
+		}
+		if (meanDurationSD < 0 || meanDurationSD == ErrorValue){
+			addText("Durartion Deviation must be a number larger than 0.\n");
+			bool = false;
+		}
+		if (invalidProb(carProb)){
+			addText("Car Probability must be a double in the range 0-1.\n");
+			bool = false;
+		}
+		if (invalidProb(smallCarProb)){
+			addText("Small Car Probability must be a double in the range 0-1.\n");
+			bool = false;
+		}
+		if (invalidProb(motorCycleProb)){
+			addText("MotorCycle Probability must be a double in the range 0-1.\n");
+			bool = false;
+		}
+		
+		return bool;
+	}
+	
+	
+	/**
+	 * Helper method to ensure valid probability 
+	 * @param prob double holding probability 
+	 * @return true if valid, false if prob > 1.0  or prob < 0.0
+	 */
+	private boolean invalidProb(double prob) {
+		return (prob < 0.0) || (prob > 1.0);
+	}
+	
+	
+	private void reset(String reason){
+		addText(reason);
+		maxCarSpaces.setEditable(true);
+	    maxSmallCarSpaces.setEditable(true);
+	    maxMotorCycleSpaces.setEditable(true);
+	    maxQueueSpaces.setEditable(true);
+	    //group 3 args
+	    seed.setEditable(true);
+	    probCar.setEditable(true);
+	    probSmallCar.setEditable(true);
+	    probMotorCycle.setEditable(true);
+	    duration.setEditable(true);
+	    durationSD.setEditable(true);
+	}
 	
 	
 	private int str_Int(String word){
@@ -227,29 +315,94 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			return Integer.parseInt(word);
 			
 		} catch (NumberFormatException e){
-			System.err.println("Argument" + word + " must be an integer.");
-			System.exit(1);
-			return -1;
+			return ErrorValue;
 		}
 	}
+	
 	
 	private double str_Double(String word){
 		try {
 			return Double.parseDouble(word);
 			
 		} catch (NumberFormatException e){
-			System.err.println("Argument" + word + " must be an integer.");
-			System.exit(1);
-			return -1;
+			return ErrorValue;
 		}
 	}
 	
 	
-	private JPanel createPanel(Color c) {
+	public void addText(String words){
+		display.setText(display.getText() + words);
+	}
+	
+	
+	public void setText(String words){
+		display.setText(words);
+	}
+	
+	
+	private void clearText(){
+		display.setText("");
+	}
+	
+	
+	/**
+	 * Method to run the simulation from start to finish. Exceptions are propagated upwards from Vehicle,
+	 * Simulation and Log objects as necessary 
+	 * @throws VehicleException if Vehicle creation or operation constraints violated 
+	 * @throws SimulationException if Simulation constraints are violated 
+	 * @throws IOException on logging failures
+	 */
+	private void runSimulation() throws VehicleException, SimulationException, IOException {
+	    clearText();
+	    addText("Start of Simulation\n" + carPark.initialState() +"\n\n");
+		this.log.initialEntry(this.carPark,this.sim);
+		for (int time=0; time<=Constants.CLOSING_TIME; time++) {
+			//queue elements exceed max waiting time
+			if (!this.carPark.queueEmpty()) {
+				this.carPark.archiveQueueFailures(time);
+			}
+			//vehicles whose time has expired
+			if (!this.carPark.carParkEmpty()) {
+				//force exit at closing time, otherwise normal
+				boolean force = (time == Constants.CLOSING_TIME);
+				this.carPark.archiveDepartingVehicles(time, force);
+			}
+			//attempt to clear the queue 
+			if (!this.carPark.carParkFull()) {
+				this.carPark.processQueue(time,this.sim);
+			}
+			// new vehicles from minute 1 until the last hour
+			if (newVehiclesAllowed(time)) { 
+				this.carPark.tryProcessNewVehicles(time,this.sim);
+			}
+			//Log progress
+			addText(carPark.getStatus(time));
+			this.log.logEntry(time,this.carPark);
+		}
+		this.log.finalise(this.carPark);
+	    addText("\nEnd of Simulation\n");
+	}
+	
+	
+	/**
+	 * Helper method to determine if new vehicles are permitted
+	 * @param time int holding current simulation time
+	 * @return true if new vehicles permitted, false if not allowed due to simulation constraints. 
+	 */
+	protected boolean newVehiclesAllowed(int time) {
+		boolean allowed = (time >=1);
+		return allowed && (time <= (Constants.CLOSING_TIME - 60));
+	}
+	
+	
+	/* Start GUI Helper Methods */
+	
+	
+	private JPanel createPanel() {
 		JPanel jp = new JPanel();
-		jp.setBackground(c);
 		return jp;
 	}
+	
 	
 	private JButton createButton(String str) {
 		JButton jb = new JButton(str); 
@@ -257,51 +410,13 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		return jb; 
 	}
 	
-	private void layoutButtonPanel() {
-	    
-	    //add components to grid
-	    GridBagConstraints constraints = new GridBagConstraints(); 
-	    
-	    //Defaults
-	    constraints.fill = GridBagConstraints.NONE;
-	    constraints.anchor = GridBagConstraints.CENTER;
-	    constraints.weightx = 100;
-	    constraints.weighty = 100;
-	    
-	    addToPanel(pnlBot, startButton,constraints,0,0,2,1);
-	    
-	    
-	}
-	
-	/**
-     * 
-     * A convenience method to add a component to given grid bag
-     * layout locations. Code due to Cay Horstmann 
-     *
-     * @param c the component to add
-     * @param constraints the grid bag constraints to use
-     * @param x the x grid position
-     * @param y the y grid position
-     * @param w the grid width
-     * @param h the grid height
-     */
-   private void addToPanel(JPanel jp,Component c, GridBagConstraints constraints, int x, int y, int w, int h) {  
-      constraints.gridx = x;
-      constraints.gridy = y;
-      constraints.gridwidth = w;
-      constraints.gridheight = h;
-      jp.add(c, constraints);
-   }
-	
-	
-   
    
 	/*
 	 * Convenience method for creating a set of positioning constraints for the
 	 * specific layout we want for components of our GUI
 	 */
 	private GridBagConstraints positionConstraints(Position location, Integer margin) {
-		
+		//TODO Cull un-necessary cases.
 		GridBagConstraints constraints = new GridBagConstraints();
 		switch (location) {
 		case TOPCENTRE:
@@ -327,10 +442,17 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			constraints.gridwidth = GridBagConstraints.REMAINDER; // component occupies whole row
 			constraints.weightx = 100; // give extra horizontal space to this object
 			break;
+		case MIDDLERIGHT:
+			constraints.anchor = GridBagConstraints.EAST;
+			constraints.insets = new Insets(0, margin, 0, margin); // top, left, bottom, right	
+			constraints.gridwidth = GridBagConstraints.REMAINDER; // component occupies whole row
+			constraints.weightx = 100; // give extra horizontal space to this object
+			break;
 		}
 		return constraints;
 	}
    
+	
 	/*
 	 * Convenience method to add a labelled, editable text field to the
 	 * main frame, with a fixed label and a mutable default text value
@@ -348,7 +470,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		parameterText.setHorizontalAlignment(JTextField.RIGHT); // flush right
 		parameterPanel.add(parameterText);
 		// Add the parameter panel to the main frame
-		pnlCentre.add(parameterPanel, positionConstraints(Position.MIDDLELEFT, mainMargin));
+		pnlParm.add(parameterPanel, positionConstraints(Position.MIDDLELEFT, mainMargin));
 		// Return the newly-created text field (but not the label, which never changes)
 		return parameterText;
 	}
