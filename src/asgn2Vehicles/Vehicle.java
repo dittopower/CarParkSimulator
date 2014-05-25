@@ -288,6 +288,9 @@ public abstract class Vehicle {
 	 * @return true if satisfied, false if never in parked state or if queuing time exceeds max allowable 
 	 */
 	public boolean isSatisfied() {
+		//If statement used to test if the car was parked and the time spent was less than or
+		//equal to the maximum queue time. If true than the driver was satisfied, if false the
+		//driver was dissatisfied.
 		if (wasParked() && (queExitTime - queTime) <= Constants.MAXIMUM_QUEUE_TIME){
 			return true;
 		}

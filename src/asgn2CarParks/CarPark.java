@@ -226,6 +226,8 @@ public class CarPark {
 			throw new SimulationException ("Queue is full.");
 		}
 		
+		//If statement to test if the vehicle you are trying to park is already in the car park or
+		//in the queue. If so throw and exception.
 		if (v.isQueued() || v.isParked()){
 			throw new VehicleException ("Vehicle is not in the correct state.");
 		}
@@ -246,10 +248,15 @@ public class CarPark {
 	 * constraints are violated
 	 */
 	public void exitQueue(Vehicle v,int exitTime) throws SimulationException, VehicleException {
+		
+		//If statement to test if the vehicle you are trying to park is not in queue. 
+		//If so throw and exception.
 		if (!queue.contains(v)){
 			throw new SimulationException ("Vehicle is not in the queue.");
 		}
 		
+		//If statement to test if the vehicle you are trying to park is not already in the queue. 
+		//If so throw and exception.
 		if (!v.isQueued()){
 			throw new VehicleException ("Vehicle is not in the queued state.");
 		}
@@ -387,14 +394,20 @@ public class CarPark {
 			throw new SimulationException("No suitable spaces are available for parking");
 		}
 		
+		//If statement to test if the vehicle you are trying to park is already in the car park or
+		//in the queue. If so throw and exception.
 		if (v.isParked() || v.isQueued()){
 			throw new VehicleException("Vehicle is not in the correct state.");
 		}
 		
+		//If statement to test if the vehicle you are trying to park has a time that exceeds the
+		//closing time for the car park. If so throw and exception.
 		if (time >= Constants.CLOSING_TIME){
 			throw new VehicleException("Parking Time is later than closing.");
 		}
 		
+		//If statement to test if the vehicle you are trying to park has a time that is less than
+		//the minimum stay time for the car park. If so throw and exception.
 		if (intendedDuration < Constants.MINIMUM_STAY){
 			throw new VehicleException("Intended duration is less than minimum.");
 		}
@@ -431,9 +444,13 @@ public class CarPark {
 
 		if (!queueEmpty()){
 			for (Vehicle v : this.queue){ 
+				
+				//If statement to test if the vehicle that is being processed is not in the queue.
+				//If so throw and exception.
 				if (!v.isQueued()){
 					throw new VehicleException("Vehicle is not in the correct state.");
 				}
+				
 				if (spacesAvailable(v)){
 					exitQueue(v,time);
 					parkVehicle(v,time,sim.setDuration());
@@ -534,6 +551,7 @@ public class CarPark {
 			Vehicle v = new Car(id,time,sim.smallCarTrial());
 			processNewVehicle(v,time, sim);
 		}
+		
 		if (sim.motorCycleTrial()){
 			String id = "MC" + count;
 			Vehicle v = new MotorCycle(id,time);
@@ -579,10 +597,15 @@ public class CarPark {
 	 * @throws SimulationException if vehicle is not in car park
 	 */
 	public void unparkVehicle(Vehicle v,int departureTime) throws VehicleException, SimulationException {
+		
+		//If statement to test if the vehicle that is being 'unparked' is not parked.
+		//If so throw and exception.
 		if (!v.isParked()){
 			throw new VehicleException("Target vehicle is not in the correct state.");
 		}
 		
+		//If statement to test if the vehicle that is being 'unparked' is not in the car park.
+		//If so throw and exception.
 		if (!spaces.contains(v)){
 			throw new SimulationException("Target vehicle is not in the Car Park");
 		}

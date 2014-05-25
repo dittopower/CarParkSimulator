@@ -22,6 +22,7 @@ import asgn2Exceptions.VehicleException;
  */
 public class Car extends Vehicle {
 	
+	//Declaring variables
 	private boolean small; 
 
 	/**
