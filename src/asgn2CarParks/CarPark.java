@@ -11,9 +11,6 @@
 package asgn2CarParks;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
@@ -595,8 +592,6 @@ public class CarPark {
 	 * @throws SimulationException
 	 */
 	private void processNewVehicle(Vehicle v, int time, Simulator sim) throws VehicleException, SimulationException {
-		
-		String finalState = "";
 		
 		if (spacesAvailable(v)){
 			parkVehicle(v,time,sim.setDuration());

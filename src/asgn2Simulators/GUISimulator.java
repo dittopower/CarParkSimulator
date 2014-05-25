@@ -54,6 +54,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 	private JButton startButton;
 	private JButton resetButton;
+	private JButton outputType;
 	
 	//Group 2 fields
 	private JTextField maxCarSpaces;
@@ -89,6 +90,11 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 	private Timer timer;
 	private int time;
+	private final int tickDelay = 10;
+	
+	private ChartPanel graph;
+	private final String textMode = "Display Graph";
+	private final String graphMode = "Display Text";
 	
 	/**
 	 * @param arg0
@@ -103,11 +109,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 //		setSize(WIDTH, HEIGHT);//Manually setup the window
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setLayout(new BorderLayout());
-//	    this.setBackground(Color.GRAY);
 	    
 		GridBagLayout layout = new GridBagLayout();
 	   
-	    //Solution code uses different colours to highlight different panels 
+	    //create panels 
 	    pnlData = createPanel();
 	    pnlParm = createPanel();
 	    pnlButtons = createPanel();
@@ -137,6 +142,8 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    resetButton = createButton("Reset");
 	    resetButton.setEnabled(false);
 	    pnlButtons.add(resetButton);
+	    outputType = createButton(textMode);
+	    pnlButtons.add(outputType);
 	    
 	    //Group 2 parameters
 	    maxCarSpaces = addParameterPanel("Max Car Spaces:", Constants.DEFAULT_MAX_CAR_SPACES);
@@ -151,7 +158,9 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    duration = addParameterPanel("Average Stay Duration:", Constants.DEFAULT_INTENDED_STAY_MEAN);
 	    durationSD = addParameterPanel("Stay Standard Deviation:", Constants.DEFAULT_INTENDED_STAY_SD);
 	    
-	    timer = new Timer(10,this);
+	    timer = new Timer(tickDelay,this);
+	    
+	    graph = new ChartPanel("Car Park Simulator");
 	    
 	    this.setVisible(true);
 	    this.pack();//this uses the automated pack to setup the window.
@@ -185,38 +194,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		//Consider the alternatives (not all are available at once) 
 		if (source == startButton && checkValues())
 		{
-			maxCarSpaces.setEditable(false);
-		    maxSmallCarSpaces.setEditable(false);
-		    maxMotorCycleSpaces.setEditable(false);
-		    maxQueueSpaces.setEditable(false);
-		    //group 3 args
-		    seed.setEditable(false);
-		    probCar.setEditable(false);
-		    probSmallCar.setEditable(false);
-		    probMotorCycle.setEditable(false);
-		    duration.setEditable(false);
-		    durationSD.setEditable(false);
-		    
-			//Setup Variables
-		    try {
-				sim = new Simulator(mySeed, meanDuration, meanDurationSD, carProb, smallCarProb, motorCycleProb);
-			} catch (SimulationException e1) {
-				reset(e1.toString());
-			}
-		    
-		    carPark = new CarPark(carSpaces, smallCarSpaces, motorCycleSpaces, queueSpaces);
-		    
-		    try {
-				log = new Log();
-			} catch (IOException e1) {
-				reset(e1.toString());
-			}
-		    
-
-		    time = 0;
-		    timer.start();
-		    startButton.setText("Again");
-		    resetButton.setEnabled(true);
+			tryStartSimulation();
 		}
 		if (source == resetButton){
 			startButton.setText("Start");
@@ -232,6 +210,59 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 				reset(e1.toString());
 			}
 		}
+		if (source == outputType){
+			if (outputType.getText()== textMode){
+				pnlData.remove(textScrollPane);
+				pnlData.add(graph, positionConstraints(Position.TOPCENTRE, mainMargin));
+				outputType.setText(graphMode);
+				this.pack();
+			}else{
+				pnlData.remove(graph);
+				pnlData.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
+				outputType.setText(textMode);
+				this.pack();
+			}
+		}
+	}
+
+
+	/**
+	 * 
+	 */
+	private void tryStartSimulation() {
+		startButton.setEnabled(false);
+		maxCarSpaces.setEditable(false);
+		maxSmallCarSpaces.setEditable(false);
+		maxMotorCycleSpaces.setEditable(false);
+		maxQueueSpaces.setEditable(false);
+		//group 3 args
+		seed.setEditable(false);
+		probCar.setEditable(false);
+		probSmallCar.setEditable(false);
+		probMotorCycle.setEditable(false);
+		duration.setEditable(false);
+		durationSD.setEditable(false);
+		
+		//Setup Variables
+		try {
+			sim = new Simulator(mySeed, meanDuration, meanDurationSD, carProb, smallCarProb, motorCycleProb);
+		} catch (SimulationException e1) {
+			reset(e1.toString());
+		}
+		
+		carPark = new CarPark(carSpaces, smallCarSpaces, motorCycleSpaces, queueSpaces);
+		
+		try {
+			log = new Log();
+		} catch (IOException e1) {
+			reset(e1.toString());
+		}
+		
+
+		time = 0;
+		timer.start();
+		startButton.setText("Again");
+		resetButton.setEnabled(true);
 	}
 	
 	
@@ -387,12 +418,14 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		}
 		//Log progress
 		addText(carPark.getStatus(time));
+		graph.addData(carPark.getStatus(time));
 		this.log.logEntry(time,this.carPark);
 		
 		if (time >= Constants.CLOSING_TIME){
 			this.log.finalise(this.carPark);
 		    addText("\nEnd of Simulation\n");
 		    timer.stop();
+		    startButton.setEnabled(true);
 		    }
 	    time++;
 	}
