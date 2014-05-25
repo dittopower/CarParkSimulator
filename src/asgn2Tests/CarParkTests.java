@@ -12,6 +12,8 @@ package asgn2Tests;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Array;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -307,18 +309,19 @@ public class CarParkTests {
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#tryProcessNewVehicles(int, asgn2Simulators.Simulator)}.
+	 * Expected Results based off the provided default.log file.
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
 	@Test
 	public void testTryProcessNewVehicles() throws VehicleException, SimulationException {
-		TestPark.tryProcessNewVehicles(1, TestSim);
-		assertEquals(TestPark.getNumSmallCars(), 1);// from default log
-		TestPark.tryProcessNewVehicles(2, TestSim);
+		int time = 1;
+		TestPark.tryProcessNewVehicles(time, TestSim);
+		time = 2;
+		TestPark.tryProcessNewVehicles(time, TestSim);
 		
 		String str = TestPark.getStatus(2);
-		System.out.print(str);
-		boolean bool = str.contains("A:1") && str.contains("P:1");
+		boolean bool = str.contains("P:1") && str.contains("Q:1");
 		assertTrue(bool);	
 	}
 
@@ -336,4 +339,36 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),0);
 	}
 
+	
+	
+	/* CarParkTests.java  - Recommended Tests*/
+	/*
+	 * Confirm that the API spec has not been violated through the
+	 * addition of public fields, constructors or methods that were
+	 * not requested
+	 */
+	@Test
+	public void NoExtraPublicMethods() {
+		//Extends Object, extras less toString() 
+		final int ExtraMethods = 21; 
+		final int NumObjectClassMethods = Array.getLength(Object.class.getMethods());
+		final int NumCarParkClassMethods = Array.getLength(CarPark.class.getMethods());
+		assertTrue("obj:"+NumObjectClassMethods+":cp:"+NumCarParkClassMethods,(NumObjectClassMethods+ExtraMethods)==NumCarParkClassMethods);
+	}
+	
+	@Test 
+	public void NoExtraPublicFields() {
+		//Same as Vehicle 
+		final int NumObjectClassFields = Array.getLength(Object.class.getFields());
+		final int NumCarParkClassFields = Array.getLength(CarPark.class.getFields());
+		assertTrue("obj:"+NumObjectClassFields+":cp:"+NumCarParkClassFields,(NumObjectClassFields)==NumCarParkClassFields);
+	}
+	
+	@Test 
+	public void NoExtraPublicConstructors() {
+		//One extra cons used. 
+		final int NumObjectClassConstructors = Array.getLength(Object.class.getConstructors());
+		final int NumCarParkClassConstructors = Array.getLength(CarPark.class.getConstructors());
+		assertTrue(":obj:"+NumObjectClassConstructors+":cp:"+NumCarParkClassConstructors,(NumObjectClassConstructors+1)==NumCarParkClassConstructors);
+	}
 }
