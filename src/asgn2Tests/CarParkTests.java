@@ -19,6 +19,7 @@ import org.junit.Test;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
+import asgn2Simulators.Constants;
 import asgn2Simulators.Simulator;
 import asgn2Vehicles.Car;
 import asgn2Vehicles.MotorCycle;
@@ -29,21 +30,25 @@ import asgn2Vehicles.MotorCycle;
  */
 public class CarParkTests {
 
-	CarPark TestPark;
-	Car TestCar;
-	Simulator TestSim;
-	MotorCycle TestMoto;
-	int minimum_stay = 20;
+	private CarPark TestPark;
+	private Car TestCar;
+	private Simulator TestSim;
+	private MotorCycle TestMoto;
+	private final int minimum_Stay = 20;
+	private final int arrival_Time = 1;
+	
+	
 	
 	@Before
 	public void setUp() throws Exception {
 		
 		TestPark =  new CarPark(0,1,0,1);
-		TestCar = new Car("7357CAR",1,true);
-		TestMoto = new MotorCycle("7357MOTO",1);
+		TestCar = new Car("7357CAR",arrival_Time,true);
+		TestMoto = new MotorCycle("7357MOTO",arrival_Time);
 		TestSim = new Simulator();
 	}
 
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -52,9 +57,10 @@ public class CarParkTests {
 		
 	}
 	
+	
 	@Test
 	public void testCarPark() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		
 		assertEquals(TestPark.getNumCars(),1);
 	}
@@ -64,26 +70,51 @@ public class CarParkTests {
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveDepartingVehicles(int, boolean)}.
+	 * @throws VehicleException 
+	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveDepartingVehicles() {
-		fail("Not yet implemented"); // TODO
+	public void testArchiveDepartingVehicles() throws SimulationException, VehicleException {
+		boolean forceout = true;
+		
+		TestPark.parkVehicle(TestCar, arrival_Time, TestSim.setDuration());
+		TestPark.archiveDepartingVehicles(TestCar.getDepartureTime(), !forceout);
+		
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("A:1") && str.contains("|S:P>A|");
+		assertTrue(bool);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
+	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveNewVehicle() {
-		fail("Not yet implemented"); // TODO
+	public void testArchiveNewVehicle() throws SimulationException {
+		TestPark.archiveNewVehicle(TestCar);
+		
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("D:1::A:1") && str.contains("|S:N>A|");
+		assertTrue(bool);
 	}
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveQueueFailures(int)}.
+	 * @throws VehicleException 
+	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveQueueFailures() {
-		fail("Not yet implemented"); // TODO
+	public void testArchiveQueueFailures() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		
+		TestPark.archiveQueueFailures(Constants.MAXIMUM_QUEUE_TIME*2);
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("D:1::A:1") && str.contains("|S:Q>A|");
+		assertTrue(bool);
 	}
 
 	/**
@@ -96,7 +127,7 @@ public class CarParkTests {
 	
 	@Test
 	public void testCarParkEmpty2() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		assertEquals(TestPark.carParkEmpty(), false);
 	}
 
@@ -110,7 +141,7 @@ public class CarParkTests {
 
 	@Test
 	public void testCarParkFull2() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		assertEquals(TestPark.carParkFull(), true);
 	}	
 	
@@ -153,7 +184,7 @@ public class CarParkTests {
 	 */
 	@Test
 	public void testGetNumCars() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		
 		assertEquals(TestPark.getNumCars(),1);
 	}
@@ -165,7 +196,7 @@ public class CarParkTests {
 	 */
 	@Test
 	public void testGetNumMotorCycles() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestMoto, 1, minimum_stay);
+		TestPark.parkVehicle(TestMoto, arrival_Time, minimum_Stay);
 		
 		assertEquals(TestPark.getNumMotorCycles(),1);
 	}
@@ -177,7 +208,7 @@ public class CarParkTests {
 	 */
 	@Test
 	public void testGetNumSmallCars() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		
 		assertEquals(TestPark.getNumCars(),1);
 	}
@@ -217,7 +248,7 @@ public class CarParkTests {
 	 */
 	@Test
 	public void testParkVehicle() throws SimulationException, VehicleException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		
 		assertEquals(TestPark.getNumCars(),1);
 		}
@@ -273,14 +304,25 @@ public class CarParkTests {
 		assertTrue(true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#tryProcessNewVehicles(int, asgn2Simulators.Simulator)}.
+	 * @throws SimulationException 
+	 * @throws VehicleException 
 	 */
 	@Test
-	public void testTryProcessNewVehicles() {
-		fail("Not yet implemented"); // TODO
+	public void testTryProcessNewVehicles() throws VehicleException, SimulationException {
+		TestPark.tryProcessNewVehicles(1, TestSim);
+		assertEquals(TestPark.getNumSmallCars(), 1);// from default log
+		TestPark.tryProcessNewVehicles(2, TestSim);
+		
+		String str = TestPark.getStatus(2);
+		System.out.print(str);
+		boolean bool = str.contains("A:1") && str.contains("P:1");
+		assertTrue(bool);	
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
 	 * @throws SimulationException 
@@ -288,7 +330,7 @@ public class CarParkTests {
 	 */
 	@Test
 	public void testUnparkVehicle() throws VehicleException, SimulationException {
-		TestPark.parkVehicle(TestCar, 1, minimum_stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		TestPark.unparkVehicle(TestCar, 1);
 		
 		assertEquals(TestPark.getNumCars(),0);
