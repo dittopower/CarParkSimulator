@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
@@ -86,7 +87,8 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private JPanel pnlParm;
 	private JPanel pnlButtons;
 	
-
+	private Timer timer;
+	private int time;
 	
 	/**
 	 * @param arg0
@@ -149,6 +151,8 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    duration = addParameterPanel("Average Stay Duration:", Constants.DEFAULT_INTENDED_STAY_MEAN);
 	    durationSD = addParameterPanel("Stay Standard Deviation:", Constants.DEFAULT_INTENDED_STAY_SD);
 	    
+	    timer = new Timer(10,this);
+	    
 	    this.setVisible(true);
 	    this.pack();//this uses the automated pack to setup the window.
 	}
@@ -208,11 +212,9 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 				reset(e1.toString());
 			}
 		    
-		    try {
-				runSimulation();
-			} catch (VehicleException | SimulationException | IOException e1) {
-				reset(e1.toString());
-			}
+
+		    time = 0;
+		    timer.start();
 		    startButton.setText("Again");
 		    resetButton.setEnabled(true);
 		}
@@ -223,6 +225,13 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		    reset(StartText);
 		}
 		
+		if (source == timer){
+			try {
+				runSimulation();
+			} catch (VehicleException | SimulationException | IOException e1) {
+				reset(e1.toString());
+			}
+		}
 	}
 	
 	
@@ -353,34 +362,39 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 * @throws IOException on logging failures
 	 */
 	private void runSimulation() throws VehicleException, SimulationException, IOException {
-	    clearText();
-	    addText("Start of Simulation\n" + carPark.initialState() +"\n\n");
-		this.log.initialEntry(this.carPark,this.sim);
-		for (int time=0; time<=Constants.CLOSING_TIME; time++) {
-			//queue elements exceed max waiting time
-			if (!this.carPark.queueEmpty()) {
-				this.carPark.archiveQueueFailures(time);
-			}
-			//vehicles whose time has expired
-			if (!this.carPark.carParkEmpty()) {
-				//force exit at closing time, otherwise normal
-				boolean force = (time == Constants.CLOSING_TIME);
-				this.carPark.archiveDepartingVehicles(time, force);
-			}
-			//attempt to clear the queue 
-			if (!this.carPark.carParkFull()) {
-				this.carPark.processQueue(time,this.sim);
-			}
-			// new vehicles from minute 1 until the last hour
-			if (newVehiclesAllowed(time)) { 
-				this.carPark.tryProcessNewVehicles(time,this.sim);
-			}
-			//Log progress
-			addText(carPark.getStatus(time));
-			this.log.logEntry(time,this.carPark);
+		if (time == 0){
+		    clearText();
+		    addText("Start of Simulation\n" + carPark.initialState() +"\n\n");
+			this.log.initialEntry(this.carPark,this.sim);
 		}
-		this.log.finalise(this.carPark);
-	    addText("\nEnd of Simulation\n");
+		//queue elements exceed max waiting time
+		if (!this.carPark.queueEmpty()) {
+			this.carPark.archiveQueueFailures(time);
+		}
+		//vehicles whose time has expired
+		if (!this.carPark.carParkEmpty()) {
+			//force exit at closing time, otherwise normal
+			boolean force = (time == Constants.CLOSING_TIME);
+			this.carPark.archiveDepartingVehicles(time, force);
+		}
+		//attempt to clear the queue 
+		if (!this.carPark.carParkFull()) {
+			this.carPark.processQueue(time,this.sim);
+		}
+		// new vehicles from minute 1 until the last hour
+		if (newVehiclesAllowed(time)) { 
+			this.carPark.tryProcessNewVehicles(time,this.sim);
+		}
+		//Log progress
+		addText(carPark.getStatus(time));
+		this.log.logEntry(time,this.carPark);
+		
+		if (time >= Constants.CLOSING_TIME){
+			this.log.finalise(this.carPark);
+		    addText("\nEnd of Simulation\n");
+		    timer.stop();
+		    }
+	    time++;
 	}
 	
 	
