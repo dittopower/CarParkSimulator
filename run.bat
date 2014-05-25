@@ -1,1 +1,1 @@
-java -cp ".;bin" asgn2Simulators.GUISimulator 
+java -cp ".;bin;jfreechart-1.0.17.jar;jcommon-1.0.21.jar;" asgn2Simulators.GUISimulator 
