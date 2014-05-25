@@ -526,12 +526,15 @@ public class CarPark {
 			}
 			
 			//Normal cars use car spots.
-			return (maxCarSpaces > numCars);
+			if (numSmallCars > maxSmallCarSpaces){
+				return ((maxCarSpaces - maxSmallCarSpaces) > ((numSmallCars - maxSmallCarSpaces) + numCars));
+			}
+			return ((maxCarSpaces - maxSmallCarSpaces) > numCars);
 		
 		//If the vehicle is a motorcycle
 		}else if (v instanceof MotorCycle){
 			//It can use motorcycle or small car spots.
-			if (maxSmallCarSpaces - numSmallCars > 0){
+			if (maxSmallCarSpaces > numSmallCars){
 				return ((maxMotorCycleSpaces + maxSmallCarSpaces - numSmallCars ) > numMotorCycles);
 			}
 			return (maxMotorCycleSpaces > numMotorCycles);
@@ -597,16 +600,15 @@ public class CarPark {
 		
 		if (spacesAvailable(v)){
 			parkVehicle(v,time,sim.setDuration());
-			finalState = "P";
+			status += setVehicleMsg(v,"N","P");
 		}else if (!queueFull()){
 			enterQueue(v);
-			finalState = "Q";
+			status += setVehicleMsg(v,"N","Q");
 		}else{
 			archiveNewVehicle(v);
-			finalState = "A";
+			//Status is set inside all archiving methods.
 		}
 		count++;
-		status += setVehicleMsg(v,"N", finalState);
 	}
 
 	
