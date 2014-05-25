@@ -19,6 +19,7 @@ import org.junit.Test;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
+import asgn2Simulators.Simulator;
 import asgn2Vehicles.Car;
 import asgn2Vehicles.MotorCycle;
 
@@ -30,6 +31,7 @@ public class CarParkTests {
 
 	CarPark TestPark;
 	Car TestCar;
+	Simulator TestSim;
 	MotorCycle TestMoto;
 	int minimum_stay = 20;
 	
@@ -39,6 +41,7 @@ public class CarParkTests {
 		TestPark =  new CarPark(0,1,0,1);
 		TestCar = new Car("7357CAR",1,true);
 		TestMoto = new MotorCycle("7357MOTO",1);
+		TestSim = new Simulator();
 	}
 
 	/**
@@ -227,9 +230,9 @@ public class CarParkTests {
 	@Test
 	public void testProcessQueue() throws SimulationException, VehicleException {
 		TestPark.enterQueue(TestCar);
-		TestPark.processQueue(1, );
+		TestPark.processQueue(2, TestSim);
 		
-		fail("Not yet implemented"); // TODO
+		assertEquals(TestPark.getNumSmallCars(),1);
 	}
 
 	/**
