@@ -18,8 +18,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 import asgn2Exceptions.VehicleException;
 import asgn2Vehicles.MotorCycle;
 import asgn2Vehicles.Vehicle;

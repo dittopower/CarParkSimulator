@@ -48,7 +48,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private final int ErrorValue = -1114;
 	
 	// Places where we'll add components to a frame
-	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE, MIDDLERIGHT};
+	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE};
 	// How big a margin to allow for the main frame
 	final Integer mainMargin = 20; // pixels
 	
@@ -444,7 +444,6 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 	/* Start GUI Helper Methods */
 	
-	
 	private JPanel createPanel() {
 		JPanel jp = new JPanel();
 		return jp;
@@ -463,7 +462,6 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 * specific layout we want for components of our GUI
 	 */
 	private GridBagConstraints positionConstraints(Position location, Integer margin) {
-		//TODO Cull un-necessary cases.
 		GridBagConstraints constraints = new GridBagConstraints();
 		switch (location) {
 		case TOPCENTRE:
@@ -485,12 +483,6 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			break;
 		case MIDDLELEFT:
 			constraints.anchor = GridBagConstraints.WEST;
-			constraints.insets = new Insets(0, margin, 0, margin); // top, left, bottom, right	
-			constraints.gridwidth = GridBagConstraints.REMAINDER; // component occupies whole row
-			constraints.weightx = 100; // give extra horizontal space to this object
-			break;
-		case MIDDLERIGHT:
-			constraints.anchor = GridBagConstraints.EAST;
 			constraints.insets = new Insets(0, margin, 0, margin); // top, left, bottom, right	
 			constraints.gridwidth = GridBagConstraints.REMAINDER; // component occupies whole row
 			constraints.weightx = 100; // give extra horizontal space to this object
