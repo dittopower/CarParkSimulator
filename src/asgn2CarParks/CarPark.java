@@ -96,7 +96,11 @@ public class CarPark {
 		numMotorCycles = 0;
 		
 		spaces = new ArrayList <Vehicle> ();
-		queue = new LinkedBlockingQueue <Vehicle> (maxQueueSize);
+		if (maxQueueSize > 0){
+			queue = new LinkedBlockingQueue <Vehicle> (maxQueueSize);
+		}else{
+			queue = new LinkedBlockingQueue <Vehicle> (1);
+		}
 		past = new ArrayList <Vehicle> ();
 		status = "";
 		currentStatusTime = -9999;//Initialize to a value that should never be used.
@@ -490,6 +494,9 @@ public class CarPark {
 	 * @return true if queue empty, false otherwise
 	 */
 	public boolean queueEmpty() {
+		if (!(maxQueueSize > 0)){
+			return true;
+		}
 		return queue.isEmpty();
 	}
 
@@ -500,6 +507,9 @@ public class CarPark {
 	 * @return true if queue full, false otherwise
 	 */
 	public boolean queueFull() {
+		if (!(maxQueueSize > 0)){
+			return true;
+		}
 		return (queue.remainingCapacity() <= 0);
 	}
 	
@@ -527,8 +537,15 @@ public class CarPark {
 			}
 			
 			//Normal cars use car spots.
+			//Check motorcycle overflow.
+			if ((maxMotorCycleSpaces + maxSmallCarSpaces) < (numMotorCycles + numSmallCars)){
+				if (maxMotorCycleSpaces < numMotorCycles){
+					return ((maxCarSpaces + maxMotorCycleSpaces) > (numCars + numSmallCars + numMotorCycles));
+				}
+			}
+			//check small car overflow.
 			if (numSmallCars > maxSmallCarSpaces){
-				return ((maxCarSpaces - maxSmallCarSpaces) > ((numSmallCars - maxSmallCarSpaces) + numCars));
+				return (maxCarSpaces > (numSmallCars + numCars));
 			}
 			return ((maxCarSpaces - maxSmallCarSpaces) > numCars);
 		
