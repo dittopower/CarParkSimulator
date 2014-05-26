@@ -163,8 +163,8 @@ public class CarPark {
 		numDissatisfied++;
 		
 		//Archive and add event to status;
-		past.add(v);
 		status += setVehicleMsg(v,"N","A");
+		past.add(v);
 	}
 	
 	
@@ -518,8 +518,12 @@ public class CarPark {
 			
 			//If the car is a small car
 			if (((Car)v).isSmall()){
-				//It can use small car or normal car spots.
-				return ((maxSmallCarSpaces + (maxCarSpaces - numCars)) > numSmallCars);
+			//remember It can use small car or normal car spots.
+				//Check if motor cycles are overflowing and compensate.
+				if (maxMotorCycleSpaces > numMotorCycles){
+					return ((maxCarSpaces - numCars) > numSmallCars);
+				}
+				return ((maxCarSpaces - numCars - numMotorCycles + maxMotorCycleSpaces) > numSmallCars);
 			}
 			
 			//Normal cars use car spots.

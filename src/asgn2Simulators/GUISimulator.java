@@ -489,7 +489,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		if (time == 0){
 		    clearText();
 		    graph.clearData();
-		    addText("Start of Simulation\n" + carPark.initialState() +"\n\n");
+		    addText("Start of Simulation\n" + sim.toString() + "\n"+ carPark.initialState() +"\n\n");
 			this.log.initialEntry(this.carPark,this.sim);
 		}
 		//queue elements exceed max waiting time
