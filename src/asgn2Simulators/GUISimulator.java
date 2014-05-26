@@ -52,9 +52,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	// How big a margin to allow for the main frame
 	final Integer mainMargin = 20; // pixels
 	
-	private JButton startButton;
-	private JButton resetButton;
+	private JButton startBtn;
+	private JButton resetBtn;
 	private JButton outputType;
+	private JButton finalGraphBtn;
 	
 	//Group 2 fields
 	private JTextField maxCarSpaces;
@@ -90,11 +91,14 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 	private Timer timer;
 	private int time;
-	private final int tickDelay = 10;
+	private final int tickDelay = 1;
 	
 	private ChartPanel graph;
 	private final String textMode = "Display Graph";
 	private final String graphMode = "Display Text";
+	private final String title = "Car Park Simulator";
+	private final String fnlGraph = "Normal Graph";
+	private final String nmlGraph = "Overview Graph";
 	
 	/**
 	 * @param arg0
@@ -137,13 +141,15 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
  		setText(StartText);
 
  		// Create Buttons   
-	    startButton = createButton("Start");
-	    pnlButtons.add(startButton);
-	    resetButton = createButton("Reset");
-	    resetButton.setEnabled(false);
-	    pnlButtons.add(resetButton);
+	    startBtn = createButton("Start");
+	    pnlButtons.add(startBtn);
+	    resetBtn = createButton("Reset");
+	    resetBtn.setEnabled(false);
+	    pnlButtons.add(resetBtn);
 	    outputType = createButton(textMode);
 	    pnlButtons.add(outputType);
+	    finalGraphBtn = createButton(nmlGraph);
+	    pnlButtons.add(finalGraphBtn);
 	    
 	    //Group 2 parameters
 	    maxCarSpaces = addParameterPanel("Max Car Spaces:", Constants.DEFAULT_MAX_CAR_SPACES);
@@ -160,7 +166,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    
 	    timer = new Timer(tickDelay,this);
 	    
-	    graph = new ChartPanel("Car Park Simulator");
+	    graph = new ChartPanel(title);
 	    
 	    this.setVisible(true);
 	    this.pack();//this uses the automated pack to setup the window.
@@ -192,15 +198,19 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		Object source = e.getSource(); 
 
 		//Consider the alternatives (not all are available at once) 
-		if (source == startButton && checkValues())
+		if (source == startBtn && checkValues())
 		{
 			tryStartSimulation();
 		}
-		if (source == resetButton){
-			startButton.setText("Start");
-		    resetButton.setEnabled(false);
+		if (source == resetBtn){
+			startBtn.setText("Start");
+			startBtn.setEnabled(true);
+			timer.stop();
+		    resetBtn.setEnabled(false);
 		    clearText();
+		    //Most of this isn't in the reset function because that function can be called at other times.
 		    reset(StartText);
+		    graph.clearData();
 		}
 		
 		if (source == timer){
@@ -211,17 +221,36 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			}
 		}
 		if (source == outputType){
+			swapOutput();
+		}
+		if (source == finalGraphBtn){
+			graph.switchGraph();
 			if (outputType.getText()== textMode){
-				pnlData.remove(textScrollPane);
-				pnlData.add(graph, positionConstraints(Position.TOPCENTRE, mainMargin));
-				outputType.setText(graphMode);
-				this.pack();
-			}else{
-				pnlData.remove(graph);
-				pnlData.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
-				outputType.setText(textMode);
-				this.pack();
+				swapOutput();
 			}
+			if (finalGraphBtn.getText() == nmlGraph){
+				finalGraphBtn.setText(fnlGraph);
+			}else{
+				finalGraphBtn.setText(nmlGraph);
+			}
+		}
+	}
+	
+
+	/**
+	 * 
+	 */
+	private void swapOutput() {
+		if (outputType.getText()== textMode){
+			pnlData.remove(textScrollPane);
+			pnlData.add(graph, positionConstraints(Position.TOPCENTRE, mainMargin));
+			outputType.setText(graphMode);
+			this.pack();
+		}else{
+			pnlData.remove(graph);
+			pnlData.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
+			outputType.setText(textMode);
+			this.pack();
 		}
 	}
 
@@ -230,7 +259,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 * 
 	 */
 	private void tryStartSimulation() {
-		startButton.setEnabled(false);
+		startBtn.setEnabled(false);
 		maxCarSpaces.setEditable(false);
 		maxSmallCarSpaces.setEditable(false);
 		maxMotorCycleSpaces.setEditable(false);
@@ -261,8 +290,8 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 
 		time = 0;
 		timer.start();
-		startButton.setText("Again");
-		resetButton.setEnabled(true);
+		startBtn.setText("Again");
+		resetBtn.setEnabled(true);
 	}
 	
 	
@@ -279,20 +308,20 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		smallCarProb =str_Double(probSmallCar.getText());
 		motorCycleProb = str_Double(probMotorCycle.getText());
 		
-		if (carSpaces == ErrorValue){
-			addText("Cars Spaces must be an Integer.\n");
+		if (carSpaces < 0){
+			addText("Cars Spaces must be a non-negative Integer.\n");
 			bool = false;
 		}
-		if (smallCarSpaces == ErrorValue){
-			addText("Small Cars Spaces must be an Integer.\n");
+		if (smallCarSpaces < 0 || smallCarSpaces > carSpaces){
+			addText("Small Cars Spaces must be a non-negative Integer, no larger than Car Spaces.\n");
 			bool = false;
 		}
-		if (motorCycleSpaces == ErrorValue){
-			addText("MotorCycle Spaces must be an Integer.\n");
+		if (motorCycleSpaces < 0){
+			addText("MotorCycle Spaces must be a non-negative Integer.\n");
 			bool = false;
 		}
-		if (queueSpaces == ErrorValue){
-			addText("Queue Spaces must be an Integer.\n");
+		if (queueSpaces < 0){
+			addText("Queue Spaces must be a non-negative Integer.\n");
 			bool = false;
 		}
 		if (mySeed == ErrorValue){
@@ -395,6 +424,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private void runSimulation() throws VehicleException, SimulationException, IOException {
 		if (time == 0){
 		    clearText();
+		    graph.clearData();
 		    addText("Start of Simulation\n" + carPark.initialState() +"\n\n");
 			this.log.initialEntry(this.carPark,this.sim);
 		}
@@ -425,7 +455,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			this.log.finalise(this.carPark);
 		    addText("\nEnd of Simulation\n");
 		    timer.stop();
-		    startButton.setEnabled(true);
+		    startBtn.setEnabled(true);
 		    }
 	    time++;
 	}
