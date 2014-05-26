@@ -106,6 +106,32 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 */
 	public GUISimulator(String arg0) throws HeadlessException {
 		super(arg0);
+		carSpaces = Constants.DEFAULT_MAX_CAR_SPACES;
+		smallCarSpaces = Constants.DEFAULT_MAX_SMALL_CAR_SPACES;
+		motorCycleSpaces = Constants.DEFAULT_MAX_MOTORCYCLE_SPACES;
+		queueSpaces = Constants.DEFAULT_MAX_QUEUE_SIZE;
+		mySeed = Constants.DEFAULT_SEED;
+		carProb = Constants.DEFAULT_CAR_PROB;
+		smallCarProb = Constants.DEFAULT_SMALL_CAR_PROB;
+		motorCycleProb = Constants.DEFAULT_MOTORCYCLE_PROB;
+		meanDuration = Constants.DEFAULT_INTENDED_STAY_MEAN;
+		meanDurationSD = Constants.DEFAULT_INTENDED_STAY_SD;
+	}
+	
+	
+	public GUISimulator(String arg0, int num1, int num2, int num3, int num4, int num5,
+			double num6, double num7, double num8, double num9, double num0){
+		super(arg0);
+		carSpaces = num1;
+		smallCarSpaces = num2;
+		motorCycleSpaces = num3;
+		queueSpaces = num4;
+		mySeed = num5;
+		carProb = num6;
+		smallCarProb = num7;
+		motorCycleProb = num8;
+		meanDuration = num9;
+		meanDurationSD = num0;
 	}
 	
 	
@@ -152,17 +178,17 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    pnlButtons.add(finalGraphBtn);
 	    
 	    //Group 2 parameters
-	    maxCarSpaces = addParameterPanel("Max Car Spaces:", Constants.DEFAULT_MAX_CAR_SPACES);
-	    maxSmallCarSpaces = addParameterPanel("Max Small Car Spaces:", Constants.DEFAULT_MAX_SMALL_CAR_SPACES);
-	    maxMotorCycleSpaces = addParameterPanel("Max MotorCycle Spaces:", Constants.DEFAULT_MAX_MOTORCYCLE_SPACES);
-	    maxQueueSpaces = addParameterPanel("Max Queue Size:", Constants.DEFAULT_MAX_QUEUE_SIZE);
+	    maxCarSpaces = addParameterPanel("Max Car Spaces:", carSpaces);
+	    maxSmallCarSpaces = addParameterPanel("Max Small Car Spaces:", smallCarSpaces);
+	    maxMotorCycleSpaces = addParameterPanel("Max MotorCycle Spaces:", motorCycleSpaces);
+	    maxQueueSpaces = addParameterPanel("Max Queue Size:", queueSpaces);
 	    //group 3 parameters
-	    seed = addParameterPanel("Random Number Seed:", Constants.DEFAULT_SEED);
-	    probCar = addParameterPanel("Car Probability:", Constants.DEFAULT_CAR_PROB);
-	    probSmallCar = addParameterPanel("Small Car Probability:", Constants.DEFAULT_SMALL_CAR_PROB);
-	    probMotorCycle = addParameterPanel("MotorCycle Probabilty:", Constants.DEFAULT_MOTORCYCLE_PROB);
-	    duration = addParameterPanel("Average Stay Duration:", Constants.DEFAULT_INTENDED_STAY_MEAN);
-	    durationSD = addParameterPanel("Stay Standard Deviation:", Constants.DEFAULT_INTENDED_STAY_SD);
+	    seed = addParameterPanel("Random Number Seed:", mySeed);
+	    probCar = addParameterPanel("Car Probability:", carProb);
+	    probSmallCar = addParameterPanel("Small Car Probability:", smallCarProb);
+	    probMotorCycle = addParameterPanel("MotorCycle Probabilty:", motorCycleProb);
+	    duration = addParameterPanel("Average Stay Duration:", meanDuration);
+	    durationSD = addParameterPanel("Stay Standard Deviation:", meanDurationSD);
 	    
 	    timer = new Timer(tickDelay,this);
 	    
@@ -186,9 +212,47 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		/* Implement Argument Processing */
+		//Non-magic numbers
+		final int minimumArgs = 10;
+		final int mustBeInts = 5;
+		final int mustBeDoubles = 5;
+		
+		if (args.length == minimumArgs){
+			
+			//Arrays to store the parsed arguments.
+			int intArgs [] = new int [mustBeInts];
+			double doubleArgs [] = new double [mustBeDoubles];
+			
+			for (int i = 0; i < minimumArgs; i++){
+				if (i < mustBeInts){
+					
+					//Try to parse the Int's from the command line.
+					try {
+						intArgs[i] = Integer.parseInt(args[i]);
+						
+					} catch (NumberFormatException e){
+						System.err.println("Argument" + args[i] + " must be an integer.");
+						System.exit(1);
+					}
+					
+				}else{
+					
+					//Try to parse the double's from the command line.
+					try {
+						doubleArgs[i-mustBeDoubles] = Double.parseDouble(args[i]);
+						
+					} catch (NumberFormatException e){
+						System.err.println("Argument" + args[i] + " must be a double.");
+						System.exit(1);
+					}
+				}
+			}
+			SwingUtilities.invokeLater(new GUISimulator("CarPark Simulator",intArgs[0],intArgs[1],intArgs[2],intArgs[3],intArgs[4],doubleArgs[0],doubleArgs[1],doubleArgs[2],doubleArgs[3],doubleArgs[4]));
+		}else{
 		//Potentially should take the same arguments as SimmulationRunner.java
         SwingUtilities.invokeLater(new GUISimulator("CarPark Simulator"));
+		}
 	}
 
 	
