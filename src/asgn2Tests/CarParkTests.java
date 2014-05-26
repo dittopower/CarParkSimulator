@@ -27,8 +27,7 @@ import asgn2Vehicles.Car;
 import asgn2Vehicles.MotorCycle;
 
 /**
- * @author hogan
- *
+ * @author Jordan Beak
  */
 public class CarParkTests {
 
@@ -42,25 +41,26 @@ public class CarParkTests {
 	
 	
 	@Before
+	/**
+	 * Setup to perform before each test.
+	 * @author Jordan Beak
+	 * @throws Exception
+	 */
 	public void setUp() throws Exception {
 		
 		TestPark =  new CarPark(0,1,0,1);
 		TestCar = new Car("7357CAR",arrival_Time,true);
 		TestMoto = new MotorCycle("7357MOTO",arrival_Time);
 		TestSim = new Simulator();
-	}
-
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-		
-	}
-	
+	}	
 	
 	@Test
+	/**
+	 * Test method to test the constructor.
+	 * @author Jordan Beak
+	 * @throws SimulationException
+	 * @throws VehicleException
+	 */
 	public void testCarPark() throws SimulationException, VehicleException {
 		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
 		
@@ -72,11 +72,13 @@ public class CarParkTests {
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveDepartingVehicles(int, boolean)}.
+	 * Test if the ArchiveDepartingVehicles functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveDepartingVehicles() throws SimulationException, VehicleException {
+	public void testArchiveDepartingVehicles1() throws SimulationException, VehicleException {
 		boolean forceout = true;
 		
 		TestPark.parkVehicle(TestCar, arrival_Time, TestSim.setDuration());
@@ -87,14 +89,55 @@ public class CarParkTests {
 		boolean bool = str.contains("A:1") && str.contains("|S:P>A|");
 		assertTrue(bool);
 	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#archiveDepartingVehicles(int, boolean)}.
+	 * Test if the ArchiveDepartingVehicles method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testArchiveDepartingVehicles2() throws SimulationException, VehicleException {
+		boolean forceout = true;
+		
+		TestPark.parkVehicle(TestCar, arrival_Time, TestSim.setDuration());
+		TestCar.exitParkedState(minimum_Stay);
+		TestPark.archiveDepartingVehicles(TestCar.getDepartureTime(), !forceout);
+		
+		String str = TestPark.getStatus(2);
 
+		boolean bool = str.contains("A:1") && str.contains("|S:P>A|");
+		assertTrue(bool);
+	}
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
+	 * Test if the ArchiveNewVehicle method functions correctly.
+	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveNewVehicle() throws SimulationException {
+	public void testArchiveNewVehicle1() throws SimulationException {
+		TestPark.archiveNewVehicle(TestCar);
+		
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("D:1::A:1") && str.contains("|S:N>A|");
+		assertTrue(bool);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
+	 * Test if the ArchiveNewVehicle method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws SimulationException 
+	 * @throws VehicleException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testArchiveNewVehicle2() throws SimulationException, VehicleException {
+		
+		TestPark.parkVehicle(TestCar, arrival_Time, TestSim.setDuration());
 		TestPark.archiveNewVehicle(TestCar);
 		
 		String str = TestPark.getStatus(2);
@@ -103,14 +146,55 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
+	 * Test if the ArchiveNewVehicle method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws SimulationException 
+	 * @throws VehicleException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testArchiveNewVehicle3() throws SimulationException, VehicleException {
+		
+		TestPark.enterQueue(TestCar);
+		TestPark.archiveNewVehicle(TestCar);
+		
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("D:1::A:1") && str.contains("|S:N>A|");
+		assertTrue(bool);
+	}
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveQueueFailures(int)}.
+	 * Test if the ArchiveQueueFailures method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testArchiveQueueFailures() throws SimulationException, VehicleException {
+	public void testArchiveQueueFailures1() throws SimulationException, VehicleException {
 		TestPark.enterQueue(TestCar);
+		
+		TestPark.archiveQueueFailures(Constants.MAXIMUM_QUEUE_TIME*2);
+		String str = TestPark.getStatus(2);
+
+		boolean bool = str.contains("D:1::A:1") && str.contains("|S:Q>A|");
+		assertTrue(bool);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#archiveQueueFailures(int)}.
+	 * Test if the ArchiveQueueFailures method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testArchiveQueueFailures2() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		TestCar.exitQueuedState(minimum_Stay);
 		
 		TestPark.archiveQueueFailures(Constants.MAXIMUM_QUEUE_TIME*2);
 		String str = TestPark.getStatus(2);
@@ -121,12 +205,19 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkEmpty()}.
+	 * Test if the CarParkEmpty method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkEmpty1() {
 		assertEquals(TestPark.carParkEmpty(), true);
 	}
 	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#carParkEmpty()}.
+	 * Test if the CarParkEmpty method functions correctly.
+	 * @author Jordan Beak
+	 */
 	@Test
 	public void testCarParkEmpty2() throws SimulationException, VehicleException {
 		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
@@ -135,12 +226,19 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkFull()}.
+	 * Test if the CarParkFull method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkFull1() {
 		assertEquals(TestPark.carParkFull(), false);
 	}
 
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#carParkFull()}.
+	 * Test if the CarParkFull method functions correctly.
+	 * @author Jordan Beak
+	 */
 	@Test
 	public void testCarParkFull2() throws SimulationException, VehicleException {
 		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
@@ -149,22 +247,68 @@ public class CarParkTests {
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
+	 * Test if the EnterQueue method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testEnterQueue() throws SimulationException, VehicleException {
+	public void testEnterQueue1() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		assertEquals(TestPark.queueEmpty(),false);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
+	 * Test if the EnterQueue method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testEnterQueue2() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		TestPark.enterQueue(TestCar);
+		assertEquals(TestPark.queueEmpty(),false);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
+	 * Test if the EnterQueue method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testEnterQueue3() throws SimulationException, VehicleException {
+		TestCar.enterQueuedState();
+		TestPark.enterQueue(TestCar);
+		assertEquals(TestPark.queueEmpty(),false);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
+	 * Test if the EnterQueue method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testEnterQueue4() throws SimulationException, VehicleException {
+		TestCar.enterParkedState(1, minimum_Stay);
 		TestPark.enterQueue(TestCar);
 		assertEquals(TestPark.queueEmpty(),false);
 	}
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the ExitQueue method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testExitQueue() throws SimulationException, VehicleException {
+	public void testExitQueue1() throws SimulationException, VehicleException {
 		TestPark.enterQueue(TestCar);
 		TestPark.exitQueue(TestCar,2);
 		
@@ -172,7 +316,39 @@ public class CarParkTests {
 	}
 
 	/**
+	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the ExitQueue method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testExitQueue2() throws SimulationException, VehicleException {
+		TestPark.exitQueue(TestCar,minimum_Stay);
+		
+		assertEquals(TestPark.queueEmpty(),true);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the ExitQueue method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testExitQueue3() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		TestCar.enterQueuedState();
+		TestPark.exitQueue(TestCar,minimum_Stay);
+		
+		assertEquals(TestPark.queueEmpty(),true);
+	}
+	
+	/**
 	 * Test method for {@link asgn2CarParks.CarPark#finalState()}.
+	 * Test if the FinalState method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testFinalState() {
@@ -181,6 +357,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumCars()}.
+	 * Test if the GetNumCars method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -193,6 +371,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumMotorCycles()}.
+	 * Test if the GetNumMotoCycles method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -205,6 +385,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumSmallCars()}.
+	 * Test if the GetNumSmallCars method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -217,6 +399,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getStatus(int)}.
+	 * Test if the GetStatus method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testGetStatus() {
@@ -225,6 +409,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#initialState()}.
+	 * Test if the InitialState method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testInitialState() {
@@ -233,6 +419,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#numVehiclesInQueue()}.
+	 * Test if the NumVehiclesInQueue method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -245,24 +433,117 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testParkVehicle() throws SimulationException, VehicleException {
+	public void testParkVehicle1() throws SimulationException, VehicleException {
 		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		
+		assertEquals(TestPark.getNumCars(),1);
+		}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testParkVehicle2() throws SimulationException, VehicleException {
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		
+		assertEquals(TestPark.getNumCars(),1);
+		}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testParkVehicle3() throws SimulationException, VehicleException {
+		TestCar.enterParkedState(1, minimum_Stay);
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		
+		assertEquals(TestPark.getNumCars(),1);
+		}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testParkVehicle4() throws SimulationException, VehicleException {
+		TestCar.enterQueuedState();
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		
+		assertEquals(TestPark.getNumCars(),1);
+		}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testParkVehicle5() throws SimulationException, VehicleException {
+		TestPark.parkVehicle(TestCar, Constants.CLOSING_TIME + 1, minimum_Stay);
+		
+		assertEquals(TestPark.getNumCars(),1);
+		}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
+	 * Test if the ParkVehicle method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testParkVehicle6() throws SimulationException, VehicleException {
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay - 1);
 		
 		assertEquals(TestPark.getNumCars(),1);
 		}
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#processQueue(int, asgn2Simulators.Simulator)}.
+	 * Test if the ProcessQueue method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
 	@Test
-	public void testProcessQueue() throws SimulationException, VehicleException {
+	public void testProcessQueue1() throws SimulationException, VehicleException {
 		TestPark.enterQueue(TestCar);
+		TestPark.processQueue(2, TestSim);
+		
+		assertEquals(TestPark.getNumSmallCars(),1);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#processQueue(int, asgn2Simulators.Simulator)}.
+	 * Test if the ProcessQueue method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws VehicleException 
+	 * @throws SimulationException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testProcessQueue2() throws SimulationException, VehicleException {
+		TestPark.enterQueue(TestCar);
+		TestCar.enterQueuedState();
 		TestPark.processQueue(2, TestSim);
 		
 		assertEquals(TestPark.getNumSmallCars(),1);
@@ -270,6 +551,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#queueEmpty()}.
+	 * Test if the QueueEmpty method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testQueueEmpty() {
@@ -278,6 +561,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#queueFull()}.
+	 * Test if the QueueFull method functions correctly.
+	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -290,6 +575,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#spacesAvailable(asgn2Vehicles.Vehicle)}.
+	 * Test if the SpacesAvailable method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testSpacesAvailable() {
@@ -300,6 +587,8 @@ public class CarParkTests {
 
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#toString()}.
+	 * Test if the ToString method functions correctly.
+	 * @author Jordan Beak
 	 */
 	@Test
 	public void testToString() {
@@ -310,6 +599,8 @@ public class CarParkTests {
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#tryProcessNewVehicles(int, asgn2Simulators.Simulator)}.
 	 * Expected Results based off the provided default.log file.
+	 * Test if the TryProcessNewVehicles method functions correctly.
+	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -328,12 +619,45 @@ public class CarParkTests {
 	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the UnparkVehicle method functions correctly.
+	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
 	@Test
-	public void testUnparkVehicle() throws VehicleException, SimulationException {
+	public void testUnparkVehicle1() throws VehicleException, SimulationException {
 		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		TestPark.unparkVehicle(TestCar, 1);
+		
+		assertEquals(TestPark.getNumCars(),0);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the UnparkVehicle method throws the VehicleException correctly.
+	 * @author Jordan Beak
+	 * @throws SimulationException 
+	 * @throws VehicleException 
+	 */
+	@Test(expected = VehicleException.class)
+	public void testUnparkVehicle2() throws VehicleException, SimulationException {
+		TestPark.parkVehicle(TestCar, arrival_Time, minimum_Stay);
+		TestCar.exitParkedState(1);
+		TestPark.unparkVehicle(TestCar, 1);
+		
+		assertEquals(TestPark.getNumCars(),0);
+	}
+	
+	/**
+	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
+	 * Test if the UnparkVehicle method throws the SimulationException correctly.
+	 * @author Jordan Beak
+	 * @throws SimulationException 
+	 * @throws VehicleException 
+	 */
+	@Test(expected = SimulationException.class)
+	public void testUnparkVehicle3() throws VehicleException, SimulationException {
+		TestCar.enterParkedState(arrival_Time, minimum_Stay);
 		TestPark.unparkVehicle(TestCar, 1);
 		
 		assertEquals(TestPark.getNumCars(),0);
