@@ -27,7 +27,7 @@ import asgn2Vehicles.Car;
 import asgn2Vehicles.MotorCycle;
 
 /**
- * @author Jordan Beak
+ * @author Jordan Beak n8848432
  */
 public class CarParkTests {
 
