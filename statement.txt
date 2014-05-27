@@ -1,0 +1,24 @@
+Students:
+------------------------------------------------------------------------------
+Damon Jones n8857954
+Jordan Beak n
+
+Statement of Contribution:
+------------------------------------------------------------------------------
+Damon did the majority of the functionality coding while jordan did less.
+Jordan ensured that all the code was commented and setout consistently as
+ we went. The Test was spiltroughly 50/50 with Damon doing the Vehicle related
+ tests and Jordan doing the CarPark and GUI Testing.
+ ------------------------------------------------------------------------------
+ Do you Argee?
+ Damon - Yes
+ Jordan - 
+ 
+ ------------------------------------------------------------------------------
+ Compiles and Runs Sucessfully on:
+ JRE 1.7.0_51
+ JDK 1.7.0_51
+ ------------------------------------------------------------------------------
+ The main Method that runs the gui is:
+	src\asgn2Simulators\GUISimulator.java
+A run.but has been provided.
