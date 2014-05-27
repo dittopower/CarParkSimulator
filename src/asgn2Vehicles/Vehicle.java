@@ -5,7 +5,7 @@
  *
  * CarParkSimulator
  * asgn2Vehicles 
- * 19/04/2014
+ * 27/05/2014
  * 
  */
 package asgn2Vehicles;
@@ -40,7 +40,7 @@ enum State { Default, Queued, Parked, Archived};
  * The method javadoc below indicates the constraints on the time and other parameters. Other time parameters may 
  * vary from simulation to simulation and so are not constrained here.  
  * 
- * @author hogan
+ * @author Damon Jones n8857954
  *
  */
 public abstract class Vehicle {
@@ -70,7 +70,6 @@ public abstract class Vehicle {
 	 * @throws VehicleException if arrivalTime is <= 0 
 	 */
 	public Vehicle(String vehID, int arrivalTime) throws VehicleException  {
-		
 		//Enforce positive arrival time.
 		if (arrivalTime <= 0){
 			throw new VehicleException("Arrival Time Must be Strictly Positive.");
@@ -78,13 +77,11 @@ public abstract class Vehicle {
 		//Set Variables
 		arriveTime = arrivalTime;
 		id = vehID;
-		
 		//Set Initial State.
 		state = State.Default;
 		hasParked = false;
 		hasQueued = false;
 	}
-
 	
 	
 	/**
@@ -99,33 +96,26 @@ public abstract class Vehicle {
 	public void enterParkedState(int parkingTime, int intendedDuration) throws VehicleException {
 		
 		final int Zero = 0;
-		
 		//Check the vehicle leaves the queue before parking.
 		if (isQueued()){
 			throw new VehicleException("The Vehicle must exit the Queue before parking.");
-		
 		//Check the vehicle's not already parked
 		}else if (isParked()){
 			throw new VehicleException("The Vehicle is Already Parked!");
-			
 		//Enforce Valid parking time.
 		}else if (parkingTime < Zero){
 			throw new VehicleException("The Time of Parking must be 0 or greater.");
-		
 		//Enforce Minimum stay duration.
 		}else if (intendedDuration < Constants.MINIMUM_STAY){
 			throw new VehicleException("The Vehicle's Stay Duration must be greater than the minimum.");
 		}
-		
 		//Set Variables
 		parkTime = parkingTime;
 		departTime = parkingTime + intendedDuration;
-		
 		//Set Parked State.
 		state = State.Parked;
 		hasParked = true;
 	}
-	
 	
 	
 	/**
@@ -134,22 +124,18 @@ public abstract class Vehicle {
 	 * @throws VehicleException if the vehicle is already in a queued or parked state
 	 */
 	public void enterQueuedState() throws VehicleException {
-		
 		//Check the vehicle's not already Queued.
 		if (isQueued()){
 			throw new VehicleException("The Vehicle must exit the Queue before parking.");
-		
 		//Check the vehicle's not currently parked.
 		}else if (isParked()){
 			throw new VehicleException("The Vehicle is Already Parked!");
 		}
-		
 		//Set Queued State.
 		state = State.Queued;
 		hasQueued = true;
 		queTime = arriveTime;
 	}
-	
 	
 	
 	/**
@@ -159,25 +145,20 @@ public abstract class Vehicle {
 	 * 		  state or if the revised departureTime < parkingTime
 	 */
 	public void exitParkedState(int departureTime) throws VehicleException {
-		
 		//Check the vehicle is parked
 		if (!isParked()){
 			throw new VehicleException("The Vehicle is not in the Parked State!");
 		}
-		
 		//Check the New departure time is not before the parking time
 		if (departureTime < parkTime){
 			throw new VehicleException("The new Departure Time is earilier than the Parking Time!");
 		}
-		
 		//Set Departure Time
 		departTime = departureTime;
-		
 		//Reset State.
 		state = State.Default;
 	}
 
-	
 	
 	/**
 	 * Transition vehicle from queued state (mutator) 
@@ -188,7 +169,6 @@ public abstract class Vehicle {
 	 *  exitTime is not later than arrivalTime for this vehicle
 	 */
 	public void exitQueuedState(int exitTime) throws VehicleException {
-		
 		//Check the vehicle is Queued
 		if (!isQueued()){
 			throw new VehicleException("The Vehicle is not in the Queued State!");
@@ -207,7 +187,6 @@ public abstract class Vehicle {
 	}
 	
 	
-	
 	/**
 	 * Simple getter for the arrival time 
 	 * @return the arrivalTime
@@ -215,7 +194,6 @@ public abstract class Vehicle {
 	public int getArrivalTime() {
 		return arriveTime;
 	}
-	
 	
 	
 	/**
@@ -229,7 +207,6 @@ public abstract class Vehicle {
 	}
 	
 	
-	
 	/**
 	 * Simple getter for the parking time
 	 * Note: result may be 0 before parking
@@ -240,7 +217,6 @@ public abstract class Vehicle {
 	}
 
 	
-	
 	/**
 	 * Simple getter for the vehicle ID
 	 * @return the vehID
@@ -250,20 +226,17 @@ public abstract class Vehicle {
 	}
 
 	
-	
 	/**
 	 * Boolean status indicating whether vehicle is currently parked 
 	 * @return true if the vehicle is in a parked state; false otherwise
 	 */
 	public boolean isParked() {
-		
 		//If the vehicle is in the parked state it must be parked.
 		if (state == State.Parked){
 			return true;
 		}
 		return false;
 	}
-
 	
 	
 	/**
@@ -271,14 +244,12 @@ public abstract class Vehicle {
 	 * @return true if vehicle is in a queued state, false otherwise 
 	 */
 	public boolean isQueued() {
-
 		//If the vehicle is in the Queued state it must be Queued.
 		if (state == State.Queued){
 			return true;
 		}
 		return false;
 	}
-	
 	
 	
 	/**
@@ -298,7 +269,6 @@ public abstract class Vehicle {
 	}
 	
 	
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -306,7 +276,6 @@ public abstract class Vehicle {
 	public String toString() {
 		return coreString(); 
 	}
-
 
 
 	/**
@@ -327,7 +296,6 @@ public abstract class Vehicle {
 		}else{
 			result += "\nVehicle was not quequed";
 		}
-		
 		//Get the string of the objects Carpark information
 		if (wasParked()){
 			result += "\nEntry to Car Park: " + parkTime +
@@ -336,19 +304,16 @@ public abstract class Vehicle {
 		}else{
 			result += "\nVehicle was not parked";
 		}
-		
 		//Get the string of the customers satisfaction
 		if (isSatisfied()){
 			result += "\nCustomer was satisfied";
 		}else{
 			result += "\nCustomer was unsatisfied";
 		}
-		
 		//Return Strings
 		return result;
 	}
 
-	
 	
 	/**
 	 * Boolean status indicating whether vehicle was ever parked
@@ -359,7 +324,6 @@ public abstract class Vehicle {
 		return hasParked;
 	}
 
-	
 	
 	/**
 	 * Boolean status indicating whether vehicle was ever queued

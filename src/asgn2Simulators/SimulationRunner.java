@@ -5,7 +5,7 @@
  *
  * CarParkSimulator
  * asgn2Simulators 
- * 23/04/2014
+ * 27/05/2014
  * 
  */
 package asgn2Simulators;
@@ -19,7 +19,7 @@ import asgn2Exceptions.VehicleException;
 /**
  * Class to operate the simulation, taking parameters and utility methods from the Simulator
  * to control the CarPark, and using Log to provide a record of operation. 
- * @author hogan
+ * @author Damon Jones n8857954
  *
  */
 public class SimulationRunner {
@@ -105,7 +105,6 @@ public class SimulationRunner {
 			
 			for (int i = 0; i < minimumArgs; i++){
 				if (i < mustBeInts){
-					
 					//Try to parse the Int's from the command line.
 					try {
 						intArgs[i] = Integer.parseInt(args[i]);
@@ -114,9 +113,7 @@ public class SimulationRunner {
 						System.err.println("Argument" + args[i] + " must be an integer.");
 						System.exit(1);
 					}
-					
 				}else{
-					
 					//Try to parse the double's from the command line.
 					try {
 						doubleArgs[i-mustBeDoubles] = Double.parseDouble(args[i]);
@@ -129,7 +126,6 @@ public class SimulationRunner {
 			}
 			//Create the new Car Park from the command line.
 			cp = new CarPark (intArgs[0], intArgs[1], intArgs[2], intArgs[3]);
-			
 			//Create the new Simulator from the command line.
 			try {
 				s = new Simulator(intArgs[4], doubleArgs[3], doubleArgs[4], doubleArgs[0], doubleArgs[1], doubleArgs[2]);

@@ -5,7 +5,7 @@
  *
  * CarParkSimulator
  * asgn2Tests 
- * 22/04/2014
+ * 27/05/2014
  * 
  */
 package asgn2Tests;
@@ -23,7 +23,7 @@ import asgn2Vehicles.Car;
 import asgn2Vehicles.Vehicle;
 
 /**
- * @author hogan
+ * @author Damon Jones n8857954
  *
  */
 public class CarTests {
@@ -36,25 +36,17 @@ public class CarTests {
 	
 	
 	/**
+	 * Make a car for testing.
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@Before@Test
 	public void setUp() throws Exception {
 		testCar = new Car(ID, ArriveTime, !SmallCar);
 	}
-
 	
 	
 	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	
-	
-	/**
+	 * So long as it don't throw an error, toString works.
 	 * Test method for {@link asgn2Vehicles.Car#toString()}.
 	 */
 	@Test
@@ -65,8 +57,8 @@ public class CarTests {
 	}
 
 	
-	
 	/**
+	 * Test Constructor throws on invalid time.
 	 * Test method for {@link asgn2Vehicles.Car#Car(java.lang.String, int, boolean)}.
 	 * @throws VehicleException 
 	 */
@@ -77,8 +69,8 @@ public class CarTests {
 	}
 
 	
-	
 	/**
+	 * test issmall works.
 	 * Test method for {@link asgn2Vehicles.Car#isSmall()}.
 	 * @throws VehicleException 
 	 */
@@ -86,11 +78,12 @@ public class CarTests {
 	public void testIsSmall() throws VehicleException {
 		//Check that the default TestCar is a normal Car.
 		assertFalse(testCar.isSmall());
-		
 		//Check that a Small car is a small car.
 		testCar = new Car(ID, ArriveTime, SmallCar);
 		assertTrue(testCar.isSmall());
 	}
+	
+	
 	
 	/* CarTests.java - Recommended Tests*/ 
 	/*

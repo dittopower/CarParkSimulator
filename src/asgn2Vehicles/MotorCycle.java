@@ -5,7 +5,7 @@
  *
  * CarParkSimulator
  * asgn2Vehicles 
- * 20/04/2014
+ * 27/05/2014
  * 
  */
 package asgn2Vehicles;
@@ -16,7 +16,7 @@ import asgn2Exceptions.VehicleException;
  * The MotorCycle class is a 'specialisation' of the Vehicle class to cater for motorcycles
  * This version uses only those facilities specified in the Vehicle class 
  * 
- * @author hogan
+ * @author Damon Jones n8857954
  *
  */
 public class MotorCycle extends Vehicle {
