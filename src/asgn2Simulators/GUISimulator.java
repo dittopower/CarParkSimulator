@@ -5,7 +5,7 @@
  *
  * CarParkSimulator
  * asgn2Simulators 
- * 20/04/2014
+ * 27/05/2014
  * 
  */
 package asgn2Simulators;
@@ -34,24 +34,26 @@ import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
 
 /**
- * @author hogan
+ * This class is responsible for making and running the GUI version of {@link asgn2Simulators.SimulationRunner}.
+ * @author Damon Jones n8857954
  *
  */
 @SuppressWarnings("serial")
 public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
+	//Simulation Components
 	private Simulator sim;
 	private CarPark carPark;
 	private Log log;
-	
+
+	//Setup Variables
+	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE};
+	// How big a margin to allow for the main frame
+	final Integer mainMargin = 20; // pixels	
 	private final String StartText = "Set the initial simulation parameters and press 'Start'\n\n";
 	private final int ErrorValue = -1114;
 	
-	// Places where we'll add components to a frame
-	private enum Position {MIDDLELEFT, TOPCENTRE, MIDDLECENTRE, BOTTOMCENTRE};
-	// How big a margin to allow for the main frame
-	final Integer mainMargin = 20; // pixels
-	
+	//buttons
 	private JButton startBtn;
 	private JButton resetBtn;
 	private JButton outputType;
@@ -66,6 +68,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private int motorCycleSpaces;
 	private JTextField maxQueueSpaces;
 	private int queueSpaces;
+	
 	//Group 3 fields
 	private JTextField seed;
 	private int mySeed;
@@ -84,15 +87,18 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private JTextArea display;           
 	private JScrollPane textScrollPane; 
 	
+	//panels
 	private JPanel pnlLHS;
 	private JPanel pnlData;
 	private JPanel pnlParm;
 	private JPanel pnlButtons;
 	
+	//timer
 	private Timer timer;
 	private int time;
 	private final int tickDelay = 1;
 	
+	//Graph related objects
 	private ChartPanel graph;
 	private final String textMode = "Display Graph";
 	private final String graphMode = "Display Text";
@@ -100,7 +106,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	private final String fnlGraph = "Normal Graph";
 	private final String nmlGraph = "Overview Graph";
 	
+	
+	
 	/**
+	 * Create the GUI and set it up with the defaults
 	 * @param arg0
 	 * @throws HeadlessException
 	 */
@@ -119,6 +128,20 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * Create the GUI and set it up with the defaults
+	 * @param arg0
+	 * @param num1 max car spaces
+	 * @param num2 max small car spaces
+	 * @param num3 max motorcycle spaces
+	 * @param num4 max queue spaces
+	 * @param num5 random generator seed
+	 * @param num6 car probability
+	 * @param num7 small car probability
+	 * @param num8 motorcycle probability
+	 * @param num9 mean stay duration
+	 * @param num0 mean stay standard deviation
+	 */
 	public GUISimulator(String arg0, int num1, int num2, int num3, int num4, int num5,
 			double num6, double num7, double num8, double num9, double num0){
 		super(arg0);
@@ -135,6 +158,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * Assembles the GUI and sets the interfaces initial values.
+	 * 
+	 */
 	private void createGUI() {
 //		setSize(WIDTH, HEIGHT);//Manually setup the window
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -148,13 +175,16 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    pnlButtons = createPanel();
 	    pnlLHS = createPanel();
 	    
+	    //Set layout style
 	    pnlLHS.setLayout(layout);
 		pnlData.setLayout(layout);
 		pnlParm.setLayout(layout);
 		
+		//Add to the window
 	    add(pnlLHS,BorderLayout.WEST);
 	    add(pnlData,BorderLayout.EAST);
 		
+	    //Put the parameters and button in their section of the window
 	    pnlLHS.add(pnlParm, positionConstraints(Position.MIDDLECENTRE, mainMargin));
 	    pnlLHS.add(pnlButtons, positionConstraints(Position.BOTTOMCENTRE, mainMargin));
 	    
@@ -190,10 +220,12 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	    duration = addParameterPanel("Average Stay Duration:", meanDuration);
 	    durationSD = addParameterPanel("Stay Standard Deviation:", meanDurationSD);
 	    
+	    //setup timer
 	    timer = new Timer(tickDelay,this);
-	    
+	    //Setup graph
 	    graph = new ChartPanel(title);
 	    
+	    //make visible and assemble/render the window.
 	    this.setVisible(true);
 	    this.pack();//this uses the automated pack to setup the window.
 	}
@@ -209,7 +241,8 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 
 	
 	/**
-	 * @param args
+	 * Runs the GUI version of the simulator.
+	 * @param args 10 values representing the group 2 & 3 parameters.
 	 */
 	public static void main(String[] args) {
 		/* Implement Argument Processing */
@@ -235,9 +268,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 						System.err.println("Argument" + args[i] + " must be an integer.");
 						System.exit(1);
 					}
-					
 				}else{
-					
 					//Try to parse the double's from the command line.
 					try {
 						doubleArgs[i-mustBeDoubles] = Double.parseDouble(args[i]);
@@ -248,25 +279,32 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 					}
 				}
 			}
+			//Start the GUI sim.
 			SwingUtilities.invokeLater(new GUISimulator("CarPark Simulator",intArgs[0],intArgs[1],intArgs[2],intArgs[3],intArgs[4],doubleArgs[0],doubleArgs[1],doubleArgs[2],doubleArgs[3],doubleArgs[4]));
 		}else{
-		//Potentially should take the same arguments as SimmulationRunner.java
+		//no arguments start the GUI sim.
         SwingUtilities.invokeLater(new GUISimulator("CarPark Simulator"));
 		}
 	}
 
-	
+	/**
+	 * Makes the buttons run their respective functions.
+	 * @param e The action-event that occurred
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Get event's source 
 		Object source = e.getSource(); 
 
-		//Consider the alternatives (not all are available at once) 
+		//Start button
 		if (source == startBtn && checkValues())
 		{
 			tryStartSimulation();
 		}
+		
+		//Reset button
 		if (source == resetBtn){
+			//set everything back to it's initial state
 			startBtn.setText("Start");
 			startBtn.setEnabled(true);
 			timer.stop();
@@ -277,6 +315,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		    graph.clearData();
 		}
 		
+		//The timer
 		if (source == timer){
 			try {
 				runSimulation();
@@ -284,11 +323,18 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 				reset(e1.toString());
 			}
 		}
+		
+		//The text/graph output button.
 		if (source == outputType){
 			swapOutput();
 		}
+		
+		//The swap between graphs button
 		if (source == finalGraphBtn){
+			//Swap
 			graph.switchGraph();
+			
+			//if necessary swap output type and button names as well.
 			if (outputType.getText()== textMode){
 				swapOutput();
 			}
@@ -302,14 +348,17 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 
 	/**
-	 * 
+	 * Swaps the textarea and graph on the GUI display.
 	 */
 	private void swapOutput() {
+		//if it's currently the text area
 		if (outputType.getText()== textMode){
+			//swap to the graph
 			pnlData.remove(textScrollPane);
 			pnlData.add(graph, positionConstraints(Position.TOPCENTRE, mainMargin));
 			outputType.setText(graphMode);
 			this.pack();
+		//otherwise swap to the text area
 		}else{
 			pnlData.remove(graph);
 			pnlData.add(textScrollPane, positionConstraints(Position.TOPCENTRE, mainMargin));
@@ -320,15 +369,15 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 
 
 	/**
-	 * 
+	 * Locks all the un-necessary fields, creates the simulation components and starts the simulation running.
 	 */
 	private void tryStartSimulation() {
+		//Lock fields
 		startBtn.setEnabled(false);
 		maxCarSpaces.setEditable(false);
 		maxSmallCarSpaces.setEditable(false);
 		maxMotorCycleSpaces.setEditable(false);
 		maxQueueSpaces.setEditable(false);
-		//group 3 args
 		seed.setEditable(false);
 		probCar.setEditable(false);
 		probSmallCar.setEditable(false);
@@ -336,30 +385,37 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		duration.setEditable(false);
 		durationSD.setEditable(false);
 		
-		//Setup Variables
+		//Setup simulation components
 		try {
+			//simulator
 			sim = new Simulator(mySeed, meanDuration, meanDurationSD, carProb, smallCarProb, motorCycleProb);
 		} catch (SimulationException e1) {
 			reset(e1.toString());
 		}
-		
+		//carpark
 		carPark = new CarPark(carSpaces, smallCarSpaces, motorCycleSpaces, queueSpaces);
-		
 		try {
+			//log
 			log = new Log();
 		} catch (IOException e1) {
 			reset(e1.toString());
 		}
-		
-
+		//Start the simulation timer
 		time = 0;
 		timer.start();
+		
+		//Set buttons/button states.
 		startBtn.setText("Again");
 		resetBtn.setEnabled(true);
 	}
 	
 	
+	/**
+	 * Checks the input values are valid and sets the to variables or show error messages in the textarea.
+	 * @return true if all fields are valid, otherwise false
+	 */
 	private boolean checkValues(){
+		//try getting/setting the values
 		boolean bool = true;
 		carSpaces = str_Int(maxCarSpaces.getText());
 		smallCarSpaces = str_Int(maxSmallCarSpaces.getText());
@@ -372,9 +428,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		smallCarProb =str_Double(probSmallCar.getText());
 		motorCycleProb = str_Double(probMotorCycle.getText());
 		
+		//Test them against their respective constraints.
 		if (carSpaces < 0){
-			addText("Cars Spaces must be a non-negative Integer.\n");
-			bool = false;
+			addText("Cars Spaces must be a non-negative Integer.\n");//show error in textarea
+			bool = false;//set return to failed
 		}
 		if (smallCarSpaces < 0 || smallCarSpaces > carSpaces){
 			addText("Small Cars Spaces must be a non-negative Integer, no larger than Car Spaces.\n");
@@ -412,7 +469,7 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 			addText("MotorCycle Probability must be a double in the range 0-1.\n");
 			bool = false;
 		}
-		
+		//return whether all values passed
 		return bool;
 	}
 	
@@ -427,6 +484,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * resets accessibility to parameter fields and display why it was reset.
+	 * @param reason the reason the GUI was reset.
+	 */
 	private void reset(String reason){
 		addText(reason);
 		maxCarSpaces.setEditable(true);
@@ -443,6 +504,11 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * Parses strings to integers or set them to the error value.
+	 * @param word the string that should be an integer
+	 * @return the int version of the string or the error value.
+	 */
 	private int str_Int(String word){
 		try {
 			return Integer.parseInt(word);
@@ -453,6 +519,11 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * Parses strings to doubles or set them to the error value.
+	 * @param word the string that should be a double
+	 * @return the double version of the string or the error value.
+	 */
 	private double str_Double(String word){
 		try {
 			return Double.parseDouble(word);
@@ -463,16 +534,27 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
 	
+	/**
+	 * Adds the given text to the textarea in the window.
+	 * @param words the text to be added
+	 */
 	public void addText(String words){
 		display.setText(display.getText() + words);
 	}
 	
 	
+	/**
+	 * Sets the text of the textarea in the window.
+	 * @param words the text the window should display.
+	 */
 	public void setText(String words){
 		display.setText(words);
 	}
 	
 	
+	/**
+	 * Clears the textarea in the window.
+	 */
 	private void clearText(){
 		display.setText("");
 	}
@@ -486,7 +568,9 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	 * @throws IOException on logging failures
 	 */
 	private void runSimulation() throws VehicleException, SimulationException, IOException {
+		//If at the initial time
 		if (time == 0){
+			//clear the display and run the initial methods
 		    clearText();
 		    graph.clearData();
 		    addText("Start of Simulation\n" + sim.toString() + "\n"+ carPark.initialState() +"\n\n");
@@ -515,12 +599,15 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 		graph.addData(carPark.getStatus(time));
 		this.log.logEntry(time,this.carPark);
 		
+		//if at the finishing time
 		if (time >= Constants.CLOSING_TIME){
+			//run the final methods and stop the timer
 			this.log.finalise(this.carPark);
 		    addText("\nEnd of Simulation\n");
 		    timer.stop();
 		    startBtn.setEnabled(true);
 		    }
+		//increment simulation time
 	    time++;
 	}
 	
@@ -538,12 +625,21 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	
 	/* Start GUI Helper Methods */
 	
+	/**
+	 * Creates a new panel.
+	 * @return the new panel
+	 */
 	private JPanel createPanel() {
 		JPanel jp = new JPanel();
 		return jp;
 	}
 	
 	
+	/**
+	 * Create a new button.
+	 * @param str The Text on the button
+	 * @return the new button
+	 */
 	private JButton createButton(String str) {
 		JButton jb = new JButton(str); 
 		jb.addActionListener(this);
@@ -551,9 +647,10 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
 	
    
-	/*
-	 * Convenience method for creating a set of positioning constraints for the
-	 * specific layout we want for components of our GUI
+	/**
+	 * Helper method for positioning constraints with the layout for components of the GUI.
+	 * @param location the position relative in it's contain we want it
+	 * @param margin the space around each element
 	 */
 	private GridBagConstraints positionConstraints(Position location, Integer margin) {
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -586,25 +683,32 @@ public class GUISimulator extends JFrame implements Runnable, ActionListener {
 	}
    
 	
-	/*
-	 * Convenience method to add a labelled, editable text field to the
+	/**
+	 * Convenience method to add a labeled, editable text field to the
 	 * main frame, with a fixed label and a mutable default text value
+	 * @param label the Text to show next to the box
+	 * @param defaultValue the value to have in the parameters box initially
+	 * @return the textfield containing the parameter.
 	 */
 	private JTextField addParameterPanel(String label, Number defaultValue) {
-		// A parameter panel has two components, a label and a text field
+		//make a panel to group the two components
 		JPanel parameterPanel = new JPanel();
+		//The parameter name/description
 		JLabel parameterLabel = new JLabel(label);
 		JTextField parameterText = new JTextField("" + defaultValue, 3);
-		// Add the label to the parameter panel
+		
+		//add the label to the parameters panel
 		parameterLabel.setHorizontalAlignment(JTextField.RIGHT); // flush right
 		parameterPanel.add(parameterLabel);
-		// Add the text field
+		
+		//add the text field
 		parameterText.setEditable(true);
 		parameterText.setHorizontalAlignment(JTextField.RIGHT); // flush right
 		parameterPanel.add(parameterText);
-		// Add the parameter panel to the main frame
+		
+		//add the parameter panel to the parameters panel
 		pnlParm.add(parameterPanel, positionConstraints(Position.MIDDLELEFT, mainMargin));
-		// Return the newly-created text field (but not the label, which never changes)
+		//Return the parameter field
 		return parameterText;
 	}
 

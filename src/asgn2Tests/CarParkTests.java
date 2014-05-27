@@ -43,21 +43,20 @@ public class CarParkTests {
 	@Before
 	/**
 	 * Setup to perform before each test.
-	 * @author Jordan Beak
 	 * @throws Exception
 	 */
 	public void setUp() throws Exception {
 		
-		TestPark =  new CarPark(0,1,0,1);
+		TestPark =  new CarPark(1,1,0,1);
 		TestCar = new Car("7357CAR",arrival_Time,true);
 		TestMoto = new MotorCycle("7357MOTO",arrival_Time);
 		TestSim = new Simulator();
 	}	
 	
+	
 	@Test
 	/**
 	 * Test method to test the constructor.
-	 * @author Jordan Beak
 	 * @throws SimulationException
 	 * @throws VehicleException
 	 */
@@ -73,7 +72,6 @@ public class CarParkTests {
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveDepartingVehicles(int, boolean)}.
 	 * Test if the ArchiveDepartingVehicles functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -90,10 +88,10 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveDepartingVehicles(int, boolean)}.
 	 * Test if the ArchiveDepartingVehicles method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -111,10 +109,10 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
 	 * Test if the ArchiveNewVehicle method functions correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 */
 	@Test
@@ -127,10 +125,10 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
 	 * Test if the ArchiveNewVehicle method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -150,7 +148,6 @@ public class CarParkTests {
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveNewVehicle(asgn2Vehicles.Vehicle)}.
 	 * Test if the ArchiveNewVehicle method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -166,10 +163,10 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveQueueFailures(int)}.
 	 * Test if the ArchiveQueueFailures method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -184,10 +181,10 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#archiveQueueFailures(int)}.
 	 * Test if the ArchiveQueueFailures method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -203,20 +200,20 @@ public class CarParkTests {
 		assertTrue(bool);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkEmpty()}.
 	 * Test if the CarParkEmpty method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkEmpty1() {
 		assertEquals(TestPark.carParkEmpty(), true);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkEmpty()}.
 	 * Test if the CarParkEmpty method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkEmpty2() throws SimulationException, VehicleException {
@@ -224,20 +221,20 @@ public class CarParkTests {
 		assertEquals(TestPark.carParkEmpty(), false);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkFull()}.
 	 * Test if the CarParkFull method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkFull1() {
 		assertEquals(TestPark.carParkFull(), false);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#carParkFull()}.
 	 * Test if the CarParkFull method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testCarParkFull2() throws SimulationException, VehicleException {
@@ -245,10 +242,10 @@ public class CarParkTests {
 		assertEquals(TestPark.carParkFull(), true);
 	}	
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
 	 * Test if the EnterQueue method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -258,10 +255,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),false);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
 	 * Test if the EnterQueue method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -272,10 +269,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),false);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
 	 * Test if the EnterQueue method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -286,10 +283,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),false);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#enterQueue(asgn2Vehicles.Vehicle)}.
 	 * Test if the EnterQueue method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -300,10 +297,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),false);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the ExitQueue method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -315,10 +312,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the ExitQueue method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -329,10 +326,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),true);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#exitQueue(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the ExitQueue method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -345,20 +342,20 @@ public class CarParkTests {
 		assertEquals(TestPark.queueEmpty(),true);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#finalState()}.
 	 * Test if the FinalState method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testFinalState() {
 		assertTrue(true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumCars()}.
 	 * Test if the GetNumCars method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -369,10 +366,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumMotorCycles()}.
 	 * Test if the GetNumMotoCycles method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -383,10 +380,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumMotorCycles(),1);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getNumSmallCars()}.
 	 * Test if the GetNumSmallCars method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -397,30 +394,30 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#getStatus(int)}.
 	 * Test if the GetStatus method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testGetStatus() {
 		assertTrue(true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#initialState()}.
 	 * Test if the InitialState method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testInitialState() {
 		assertTrue(true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#numVehiclesInQueue()}.
 	 * Test if the NumVehiclesInQueue method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -431,10 +428,10 @@ public class CarParkTests {
 		assertEquals(TestPark.numVehiclesInQueue(),1);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -445,10 +442,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -460,10 +457,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -475,10 +472,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -490,10 +487,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -504,10 +501,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#parkVehicle(asgn2Vehicles.Vehicle, int, int)}.
 	 * Test if the ParkVehicle method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -518,10 +515,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),1);
 		}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#processQueue(int, asgn2Simulators.Simulator)}.
 	 * Test if the ProcessQueue method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -533,10 +530,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumSmallCars(),1);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#processQueue(int, asgn2Simulators.Simulator)}.
 	 * Test if the ProcessQueue method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -549,20 +546,20 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumSmallCars(),1);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#queueEmpty()}.
 	 * Test if the QueueEmpty method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testQueueEmpty() {
 		assertEquals(TestPark.queueEmpty(),true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#queueFull()}.
 	 * Test if the QueueFull method functions correctly.
-	 * @author Jordan Beak
 	 * @throws VehicleException 
 	 * @throws SimulationException 
 	 */
@@ -573,10 +570,10 @@ public class CarParkTests {
 		assertEquals(TestPark.queueFull(),true);
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#spacesAvailable(asgn2Vehicles.Vehicle)}.
 	 * Test if the SpacesAvailable method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testSpacesAvailable() {
@@ -585,10 +582,10 @@ public class CarParkTests {
 		
 	}
 
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#toString()}.
 	 * Test if the ToString method functions correctly.
-	 * @author Jordan Beak
 	 */
 	@Test
 	public void testToString() {
@@ -600,7 +597,6 @@ public class CarParkTests {
 	 * Test method for {@link asgn2CarParks.CarPark#tryProcessNewVehicles(int, asgn2Simulators.Simulator)}.
 	 * Expected Results based off the provided default.log file.
 	 * Test if the TryProcessNewVehicles method functions correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -620,7 +616,6 @@ public class CarParkTests {
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the UnparkVehicle method functions correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -632,10 +627,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),0);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the UnparkVehicle method throws the VehicleException correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
@@ -648,10 +643,10 @@ public class CarParkTests {
 		assertEquals(TestPark.getNumCars(),0);
 	}
 	
+	
 	/**
 	 * Test method for {@link asgn2CarParks.CarPark#unparkVehicle(asgn2Vehicles.Vehicle, int)}.
 	 * Test if the UnparkVehicle method throws the SimulationException correctly.
-	 * @author Jordan Beak
 	 * @throws SimulationException 
 	 * @throws VehicleException 
 	 */
